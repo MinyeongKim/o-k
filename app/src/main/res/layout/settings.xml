@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <!-- 타이틀 / Title -->
+        <TextView
+            android:id="@+id/O-K"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/one"
+            android:text="O-l<"
+            android:textSize="45dp" />
+
+
+        <!-- 슬라이딩 메뉴 / Sliding menu -->
+        <Button
+            android:id="@+id/btnMenu"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/Menu_button" />
+
+
+        <!-- 푸쉬 설정 타이틀 / Push setting title -->
+        <TextView
+            android:id="@+id/push_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="130dp"
+            android:fontFamily="@font/one"
+            android:text="푸쉬 설정"
+            android:textSize="25dp" />
+
+
+        <TableLayout
+            android:id="@+id/push_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/push_setting"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/round"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:stretchColumns="1">
+
+            <!-- 첫번째 줄 / First Row-->
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/one"
+                    android:text="날씨에 맞은 옷 추천 푸시 알림"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false" />
+
+            </TableRow>
+
+
+            <!-- 두번째 줄 / Second Row-->
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/one"
+                    android:text="옷 정리 푸시 알림"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:checked="true" />
+
+            </TableRow>
+
+        </TableLayout>
+
+
+        <!-- 테마 설정 타이틀 / Theme setting title -->
+        <TextView
+            android:id="@+id/theme_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/push_table"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/one"
+            android:text="테마 설정"
+            android:textSize="25dp" />
+
+
+        <!-- 테마 설정 테이블 레이아웃 / Theme setting table layout-->
+        <TableLayout
+            android:id="@+id/theme_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/theme_setting"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/round"
+            android:orientation="vertical"
+            android:padding="20dp"
+            >
+
+            <!-- 첫번째 줄 / First Row-->
+            <RadioGroup
+                android:id="@+id/radGroupTheme">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:stretchColumns="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/one"
+                        android:text="청록색"
+                        android:textColor="#ffffff"
+                        android:textSize="18dp"
+                        android:layout_weight="1"
+                        />
+
+                    <RadioButton
+                        android:id="@+id/radBtnGreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0">
+
+                    </RadioButton>
+
+                </TableRow>
+            </RadioGroup>
+
+            <!-- 두번째 줄 / Second Row-->
+            <TableRow
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:stretchColumns="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/one"
+                    android:text="옅은 청록색"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    android:layout_weight="1"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radBtnLightGreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0">
+
+                </RadioButton>
+
+
+            </TableRow>
+
+
+            <!-- 세번째 줄 / Third Row-->
+            <TableRow
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:stretchColumns="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/one"
+                    android:text="파스텔톤 노란색"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    android:layout_weight="1"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radBtnYellow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0">
+
+                </RadioButton>
+
+            </TableRow>
+
+
+            <!-- 네번째 줄 / Fourth Row-->
+            <TableRow
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:stretchColumns="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/one"
+                    android:text="연분홍색"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    android:layout_weight="1"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radBtnLightPink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0">
+
+                </RadioButton>
+
+            </TableRow>
+
+
+            <!-- 다섯번째 줄 / Fifth Row-->
+            <TableRow
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:stretchColumns="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/one"
+                    android:text="핫핑크색"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    android:layout_weight="1"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radBtnPink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0">
+
+                </RadioButton>
+
+            </TableRow>
+
+
+        </TableLayout>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>
