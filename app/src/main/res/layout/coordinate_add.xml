@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+    <!-- 타이틀 / Title -->
+    <TextView
+        android:id="@+id/O-K"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/one"
+        android:text="O-l<"
+        android:textSize="45dp" />
+
+
+    <!-- 슬라이딩 메뉴 / Sliding menu -->
+    <Button
+        android:id="@+id/btnMenu"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/Menu_button" />
+
+
+        <TableLayout
+            android:id="@+id/push_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/O-K"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="30dp"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+
+
+        </TableLayout>
+
+    </RelativeLayout>
+</LinearLayout>
