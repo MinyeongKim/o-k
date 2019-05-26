@@ -21,6 +21,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -28,6 +29,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.io.File;
@@ -157,29 +159,32 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 
-    //ContextMenu
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
+    //버튼 clickLintener
+    public void mOnClick(View v){
+        PopupMenu popup = new PopupMenu(add_cloth_Activity.this, v);
 
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_clothe_image, menu);
+        MenuInflater inflater = popup.getMenuInflater();
+        Menu menu = popup.getMenu();
+
+        inflater.inflate(R.menu.add_clothe_popupmenu, menu);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.useCamera:
+                        captureCamera();
+                        break;
+                    case R.id.useAlbum:
+                        getAlbum();
+                        break;
+                }
+                return false;
+            }
+        });
+        popup.show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.takePicture:
-                captureCamera();
-            case R.id.gellery:
-                getAlbum();
-        }
-
-        checkPermission();
-
-        return false;
-    }
-
+    //사진 읽기
     private void captureCamera(){
         String state = Environment.getExternalStorageState();
 

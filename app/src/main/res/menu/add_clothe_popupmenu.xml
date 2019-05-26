@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/useCamera"
+        android:title="사진 찍기"/>
+    <item android:id="@+id/useAlbum"
+        android:title="앨범에서 가져오기"/>
+</menu>
