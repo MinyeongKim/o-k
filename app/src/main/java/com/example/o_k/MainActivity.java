@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Spinner;
 
+import java.text.SimpleDateFormat;
+
 public class MainActivity extends AppCompatActivity {
     Spinner category;
     Button btnMenu;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Spinner
+        /*
         category = findViewById(R.id.category_cloth);
         grid = findViewById(R.id.gellery)
         category.setOnItemClickListener(new AdapterView.OnItemSelectedListener(){
@@ -36,5 +39,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent){}
         });
+        */
     }
 }

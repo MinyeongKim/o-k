@@ -18,7 +18,7 @@ android:layout_width="match_parent">
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:fontFamily="@font/one"
-        android:text="O-l<"
+        android:text="O-K"
         android:textSize="45dp" />
 
     <!--슬라이드 메뉴-->
@@ -27,7 +27,7 @@ android:layout_width="match_parent">
         android:layout_marginTop="25dp"
         android:layout_height="60dp"
         android:layout_width="60dp"
-        android:background="@drawable/Menu_button"
+        android:background="@drawable/menu_button"
         />
 
     <!--카테고리별 옷 출력-->

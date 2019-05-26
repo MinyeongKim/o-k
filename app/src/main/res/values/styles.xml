@@ -10,7 +10,7 @@
 
 
     <style name="SplashTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">@drawable/Loading</item>
+        <item name="android:windowBackground">@drawable/loading</item>
     </style>
 
 </resources>

@@ -18,7 +18,7 @@ android:layout_width="match_parent">
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:fontFamily="@font/one"
-        android:text="O-l<"
+        android:text="O-K"
         android:textSize="45dp" />
 
 
@@ -28,7 +28,7 @@ android:layout_width="match_parent">
         android:layout_marginTop="25dp"
         android:layout_height="60dp"
         android:layout_width="60dp"
-        android:background="@drawable/Menu_button"
+        android:background="@drawable/menu_button"
         />
     
     <LinearLayout
@@ -39,12 +39,19 @@ android:layout_width="match_parent">
         android:layout_marginTop="10dp"
         android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/add_image"
+        <ImageView
+            android:id="@+id/image_view"
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/camera" />
+
+        <Button
+            android:id="@+id/add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="사진 추가"/>
 
 
     </LinearLayout>
@@ -54,7 +61,7 @@ android:layout_width="match_parent">
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_add_image"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:stretchColumns="*">
 
         <TableRow
