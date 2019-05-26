@@ -48,7 +48,7 @@ public class setting_Activity extends AppCompatActivity {
             }
         });
 
-        //Activity 전환
+        //Activity 이동
         closetMenu = findViewById(R.id.closet_menu);
         weatherMenu = findViewById(R.id.weather_menu);
         coordiMenu = findViewById(R.id.coordi_menu);
