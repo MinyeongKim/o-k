@@ -3,9 +3,15 @@ package com.example.o_k;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,12 +36,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class add_cloth_Activity extends AppCompatActivity {
@@ -51,15 +61,19 @@ public class add_cloth_Activity extends AppCompatActivity {
     private static final int REQUEST_TAKE_PHOTO = 2222;
     private static final int REQUEST_TAKE_ALBUM = 3333;
     private static final int REQUEST_IMAGE_CROP = 4444;
+    private static final int REQUEST_CAMERA_CROP = 5555;
 
     ImageView view;
     Button btn_add_image;
 
     String mCurrentPhotoPath;
+    Uri imageURI, photoURI, albumURI, cameraURI;
 
-    Uri imageURI;
-    Uri photoURI, albumURI;
+    //라디오 버튼
+    RadioGroup classiRad, thickRad, sleeveRad;
 
+    //옷 추가 버튼
+    Button btnAdd;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +148,32 @@ public class add_cloth_Activity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //라디오 그룹
+        classiRad = findViewById(R.id.classification);
+        thickRad = findViewById(R.id.thickness);
+        sleeveRad = findViewById(R.id.sleeves_length);
+
+        //최종 추가버튼
+        btnAdd = findViewById(R.id.add_clothe);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int classiID = classiRad.getCheckedRadioButtonId();
+                RadioButton classiBtn = findViewById(classiID);
+                String classiOutput =  classiBtn.getText().toString();
+
+                int thickID = thickRad.getCheckedRadioButtonId();
+                RadioButton thickBtn = findViewById(thickID);
+                String thickOutput = classiBtn.getText().toString();
+
+                int lengthId = sleeveRad.getCheckedRadioButtonId();
+                RadioButton lengBtn = findViewById(lengthId);
+                String lengOutput = lengBtn.getText().toString();
+
+
+            }
+        });
     }
 
     //Slide menu animation
@@ -173,10 +213,10 @@ public class add_cloth_Activity extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.useCamera:
                         captureCamera();
-                        break;
+                        return true;
                     case R.id.useAlbum:
                         getAlbum();
-                        break;
+                        return true;
                 }
                 return false;
             }
@@ -184,57 +224,37 @@ public class add_cloth_Activity extends AppCompatActivity {
         popup.show();
     }
 
-    //사진 읽기
+    //사진 가져오기
     private void captureCamera(){
-        String state = Environment.getExternalStorageState();
-
-        //외장 메모리 검사
-        if(Environment.MEDIA_MOUNTED.equals(state)){
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            if(takePictureIntent.resolveActivity(getPackageManager()) != null){
-                File photoFile = null;
-                try{
-                    photoFile = createImageFile();
-                } catch (IOException ex){
-                    Log.e("captureCamera Error", ex.toString());
-                }
-
-                if(photoFile != null){
-                    Uri providerURI = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-                    imageURI = providerURI;
-
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerURI);
-                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                }
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(takePictureIntent.resolveActivity(getPackageManager()) != null){
+            File photoFile = null;
+            try{
+                photoFile = createImageFile();
+            }catch (IOException ex){
+                //Error occurred while creating the File
             }
-        }else{
-            Toast.makeText(this, "저장공간에 접근 불가능한 기기입니다", Toast.LENGTH_SHORT).show();
-            return;
+
+            if(photoFile != null){
+                Uri providerURI = FileProvider.getUriForFile(this, getPackageName(), photoFile);
+                imageURI = providerURI;
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
         }
     }
 
     public File createImageFile() throws  IOException{
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + ".jpg";
-        File imageFile = null;
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures","gyeom");
-
-        if(!storageDir.exists()){
-            Log.i("mCurrentPhotoPath1", storageDir.toString());
-            storageDir.mkdirs();
-        }
-
-        imageFile = new File(storageDir, imageFileName);
-        mCurrentPhotoPath = imageFile.getAbsolutePath();
-
-        return imageFile;
+        String imageFileName = timeStamp + ".jpg";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     private void getAlbum(){
-        Log.i("getAlbum", "Call");
         Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         startActivityForResult(intent, REQUEST_TAKE_ALBUM);
     }
@@ -247,13 +267,9 @@ public class add_cloth_Activity extends AppCompatActivity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         sendBroadcast(mediaScanIntent);
-        Toast.makeText(this, "사진이 앨범에 저장되었습니다", Toast.LENGTH_SHORT).show();
     }
 
     public void cropImage(){
-        Log.i("cropImage", "Call");
-        Log.i("cropImage", "photoURI : "+photoURI+ " / albumURI : " + albumURI);
-
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
 
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -267,27 +283,39 @@ public class add_cloth_Activity extends AppCompatActivity {
         startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
     }
 
+    public void cropCamera(){
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+
+        cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        cropIntent.setDataAndType(imageURI, "image/*");
+
+        cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);
+        cropIntent.putExtra("scale", true);
+        cropIntent.putExtra("output", cameraURI);
+        startActivityForResult(cropIntent, REQUEST_CAMERA_CROP);
+    }
+
     @Override
     protected  void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (requestCode){
             case REQUEST_TAKE_PHOTO:
-                if(resultCode == Activity.RESULT_OK){
+                if(resultCode == RESULT_OK){
                     try{
-                        Log.i("REQUEST_TAKE_PHOTO", "OK");
-                        galleryAddPic();
-
+                        File cameraFile = null;
+                        cameraFile = createImageFile();
+                        cameraURI = Uri.fromFile(cameraFile);
+                        cropCamera();
                         view.setImageURI(imageURI);
-                    } catch (Exception e){
-                        Log.e("REQUEST_TAKE_PHOTO", e.toString());
-                    }
+                    }catch (Exception e){ }
                 } else{
                     Toast.makeText(add_cloth_Activity.this, "사진찍기를 취소하였습니다", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
             case REQUEST_TAKE_ALBUM:
-                if(resultCode == Activity.RESULT_OK){
-
+                if(resultCode == RESULT_OK){
                     if(data.getData() != null){
                         try{
                             File albumFile = null;
@@ -306,6 +334,13 @@ public class add_cloth_Activity extends AppCompatActivity {
                 if(resultCode == Activity.RESULT_OK){
                     galleryAddPic();
                     view.setImageURI(albumURI);
+                }
+                break;
+
+            case REQUEST_CAMERA_CROP:
+                if(resultCode == Activity.RESULT_OK){
+                    galleryAddPic();
+                    view.setImageURI(cameraURI);
                 }
                 break;
         }
@@ -355,5 +390,7 @@ public class add_cloth_Activity extends AppCompatActivity {
                 break;
         }
     }
+
+
 }
 

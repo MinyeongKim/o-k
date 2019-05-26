@@ -2,5 +2,5 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path
         name="hidden"
-        path="/Pictures/gyeom"/>
+        path="Android/data/com.example.o_k/files/Pictures"/>
 </paths>
