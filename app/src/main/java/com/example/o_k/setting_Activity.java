@@ -2,12 +2,15 @@ package com.example.o_k;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 public class setting_Activity extends AppCompatActivity {
     boolean isSlideOpen = false;
@@ -16,6 +19,7 @@ public class setting_Activity extends AppCompatActivity {
     LinearLayout slideMenu;
     Animation showMenu;
     Animation non_showMenu;
+    RadioGroup rg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,40 @@ public class setting_Activity extends AppCompatActivity {
                 finish();
             }
         });
+
+
+        rg = (RadioGroup) findViewById(R.id.radGroupTheme);
+
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
+                switch (checkedId) {
+                    case R.id.radBtnGreen:
+                        Toast.makeText(getApplicationContext(), "현재 테마 : 초록색", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case R.id.radBtnLightGreen:
+                        Toast.makeText(getApplicationContext(), "현재 테마 : 옅은 초록색", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.radBtnYellow:
+                        Toast.makeText(getApplicationContext(), "현재 테마 : 노란색", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case R.id.radBtnLightPink:
+                        Toast.makeText(getApplicationContext(), "현재 테마 : 연한 분홍색", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case R.id.radBtnPink:
+                        Toast.makeText(getApplicationContext(), "현재 테마 : 분홍색", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+
+
+
+
+
 
     }
 
