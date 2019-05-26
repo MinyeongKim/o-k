@@ -89,8 +89,7 @@
             android:text="설정"/>
     </LinearLayout>
 
-    <!--카테고리별 옷 출력-->
-
+    <!--코디 볼 수 있는 곳-->
     <LinearLayout
         android:id="@+id/body"
         android:layout_width="match_parent"
@@ -100,17 +99,11 @@
         android:orientation="vertical"
         android:layout_below="@+id/O-K">
 
-        <Spinner
-            android:id="@+id/category_cloth"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:entries="@array/category" />
-
 
     </LinearLayout>
 
     <Button
-        android:id="@+id/BtnAddClothe"
+        android:id="@+id/BtnAddCoordi"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_width="50dp"

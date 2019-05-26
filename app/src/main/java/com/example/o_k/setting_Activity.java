@@ -1,33 +1,26 @@
 package com.example.o_k;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 
-import java.text.SimpleDateFormat;
-
-public class MainActivity extends AppCompatActivity {
+public class setting_Activity extends AppCompatActivity {
     boolean isSlideOpen = false;
-    Button btnAddClothe;
     Button btnMenu;
     Button closetMenu, weatherMenu, coordiMenu, settingMenu;
     LinearLayout slideMenu;
     Animation showMenu;
     Animation non_showMenu;
-    Spinner category;
-    GridView grid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.settings);
 
         //Show Slide Menu
         slideMenu = findViewById(R.id.slideMenu);
@@ -36,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         slideMenu.bringToFront();
 
-        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+        setting_Activity.SlidingPageAnimationListener animationListener = new setting_Activity.SlidingPageAnimationListener();
         showMenu.setAnimationListener(animationListener);
         non_showMenu.setAnimationListener(animationListener);
 
@@ -72,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         weatherMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), weather_Activity.class);
+                Intent intent = new Intent(getApplicationContext(), api.class);
                 startActivity(intent);
                 finish();
             }
@@ -94,35 +87,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //옷 추가 버튼
-        btnAddClothe = findViewById(R.id.BtnAddClothe);
-        btnAddClothe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), add_cloth_Activity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        //Grid View
-        //Create custom adapter
-
-
-        //Spinner
-        /*
-        category = findViewById(R.id.category_cloth);
-        grid = findViewById(R.id.gellery)
-        category.setOnItemClickListener(new AdapterView.OnItemSelectedListener(){
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent){}
-        });
-        */
     }
 
     //Slide menu animation

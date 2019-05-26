@@ -8,7 +8,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <!-- 타이틀 / Title -->
@@ -17,19 +16,85 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/one"
             android:text="O-K"
             android:textSize="45dp" />
 
 
-        <!-- 슬라이딩 메뉴 / Sliding menu -->
+        <!--슬라이드 메뉴-->
         <Button
             android:id="@+id/btnMenu"
-            android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/menu_button" />
+            android:layout_width="60dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/menu_button"
+            />
+
+        <LinearLayout
+            android:id="@+id/slideMenu"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#44000000"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="60dp"
+                android:fontFamily="@font/one"
+                android:textSize="35dp"
+                android:textStyle="bold"
+                android:textColor="#ffffffff"
+                android:layout_gravity="center"
+                android:text="MENU"/>
+
+            <Button
+                android:id="@+id/closet_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableLeft="@drawable/add_button"
+                android:gravity="left|center_vertical"
+                android:fontFamily="@font/one"
+                android:textSize="30dp"
+                android:text="옷장"/>
+
+            <Button
+                android:id="@+id/weather_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableLeft="@drawable/add_button"
+                android:gravity="left|center_vertical"
+                android:fontFamily="@font/one"
+                android:textSize="30dp"
+                android:text="날씨"/>
+
+            <Button
+                android:id="@+id/coordi_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableLeft="@drawable/add_button"
+                android:gravity="left|center_vertical"
+                android:fontFamily="@font/one"
+                android:textSize="30dp"
+                android:text="코디"/>
+
+            <Button
+                android:id="@+id/setting_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableLeft="@drawable/add_button"
+                android:gravity="left|center_vertical"
+                android:fontFamily="@font/one"
+                android:textSize="30dp"
+                android:text="설정"/>
+        </LinearLayout>
 
 
         <!-- 푸쉬 설정 타이틀 / Push setting title -->

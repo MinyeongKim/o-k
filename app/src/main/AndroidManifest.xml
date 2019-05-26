@@ -22,6 +22,10 @@
         </activity>
 
         <activity android:name=".add_cloth_Activity"></activity>
+        <activity android:name=".coordinate_show_Activity"></activity>
+        <activity android:name=".coordinate_add_Activity"></activity>
+        <activity android:name=".setting_Activity"></activity>
+        <activity android:name=".weather_Activity"></activity>
         <activity android:name=".MainActivity">
 
         </activity>
