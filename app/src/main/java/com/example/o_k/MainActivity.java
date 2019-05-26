@@ -1,5 +1,6 @@
 package com.example.o_k;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +13,7 @@ import java.text.SimpleDateFormat;
 
 public class MainActivity extends AppCompatActivity {
     Spinner category;
-    Button btnMenu;
+    Button btnMenu, btnAddClothe;
     GridView grid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +21,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //슬라이드 메뉴 버튼
+
         btnMenu = findViewById(R.id.btnMenu);
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        //옷 추가 버튼
+        btnAddClothe = findViewById(R.id.BtnAddClothe);
+        btnAddClothe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), add_cloth_Activity.class);
+                startActivity(intent);
+            }
+        });
 
         //Grid View
         //Create custom adapter

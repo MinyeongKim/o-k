@@ -16,16 +16,12 @@ android:layout_width="match_parent">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
         android:fontFamily="@font/one"
         android:text="O-K"
         android:textSize="45dp" />
 
-
-
     <Button
         android:id="@+id/btnMenu"
-        android:layout_marginTop="25dp"
         android:layout_height="60dp"
         android:layout_width="60dp"
         android:background="@drawable/menu_button"
@@ -47,7 +43,7 @@ android:layout_width="match_parent">
             android:src="@drawable/camera" />
 
         <Button
-            android:id="@+id/add_image"
+            android:id="@+id/btn_add_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

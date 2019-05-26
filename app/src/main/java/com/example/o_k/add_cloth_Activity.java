@@ -17,9 +17,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,17 +53,17 @@ public class add_cloth_Activity extends AppCompatActivity {
         setContentView(R.layout.add_cloth);
 
         view = findViewById(R.id.image_view);
-        btn_add_image = findViewById(R.id.add_image);
+        btn_add_image = findViewById(R.id.btn_add_image);
 
         registerForContextMenu(btn_add_image);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.add_clothe_image, menu);
-
-        return true;
     }
 
     @Override

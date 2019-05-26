@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_height="match_parent"
-android:layout_width="match_parent">
 
 <RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:layout_marginTop="20dp">
+    android:layout_height="match_parent">
 
-    <!-- 타이틀 / Title -->
     <TextView
         android:id="@+id/O-K"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
         android:fontFamily="@font/one"
         android:text="O-K"
         android:textSize="45dp" />
@@ -24,19 +17,85 @@ android:layout_width="match_parent">
     <!--슬라이드 메뉴-->
     <Button
         android:id="@+id/btnMenu"
-        android:layout_marginTop="25dp"
         android:layout_height="60dp"
         android:layout_width="60dp"
         android:background="@drawable/menu_button"
         />
 
-    <!--카테고리별 옷 출력-->
     <LinearLayout
+        android:id="@+id/slideMenu"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#44000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="60dp"
+            android:fontFamily="@font/one"
+            android:textSize="35dp"
+            android:textStyle="bold"
+            android:textColor="#ffffffff"
+            android:layout_gravity="center"
+            android:text="MENU"/>
+
+        <Button
+            android:id="@+id/closet_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/add_button"
+            android:gravity="left|center_vertical"
+            android:fontFamily="@font/one"
+            android:textSize="30dp"
+            android:text="옷장"/>
+
+        <Button
+            android:id="@+id/weather_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/add_button"
+            android:gravity="left|center_vertical"
+            android:fontFamily="@font/one"
+            android:textSize="30dp"
+            android:text="날씨"/>
+
+        <Button
+            android:id="@+id/coordi_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/add_button"
+            android:gravity="left|center_vertical"
+            android:fontFamily="@font/one"
+            android:textSize="30dp"
+            android:text="코디"/>
+
+        <Button
+            android:id="@+id/setting_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/add_button"
+            android:gravity="left|center_vertical"
+            android:fontFamily="@font/one"
+            android:textSize="30dp"
+            android:text="설정"/>
+    </LinearLayout>
+
+    <!--카테고리별 옷 출력-->
+
+    <LinearLayout
+        android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/O-K"
         android:layout_marginTop="20dp"
-        android:orientation="vertical">
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        android:layout_below="@+id/O-K">
 
         <Spinner
             android:id="@+id/category_cloth"
@@ -44,18 +103,15 @@ android:layout_width="match_parent">
             android:layout_height="wrap_content"
             android:entries="@array/category" />
 
-        <GridView
-            android:id="@+id/gridview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:columnWidth="90dp"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:gravity="center">
-
-        </GridView>
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/BtnAddClothe"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/add_button" />
+
 </RelativeLayout>
-</ScrollView>

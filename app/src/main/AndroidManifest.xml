@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".add_cloth_Activity"></activity>
         <activity android:name=".MainActivity">
 
         </activity>
