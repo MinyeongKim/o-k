@@ -1,19 +1,30 @@
 package com.example.o_k;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     boolean isSlideOpen = false;
@@ -25,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
     Animation non_showMenu;
     Spinner category;
     GridView grid;
+    ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+    //SQLite
+    DBHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,13 +117,28 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), add_cloth_Activity.class);
                 startActivity(intent);
-
             }
         });
 
-        //Grid View
-        //Create custom adapter
 
+
+
+        //Read Data
+        dbHelper = new DBHelper(MainActivity.this, "MyDB.db", null, 1);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String sql = "SELECT * FROM closet";
+        Cursor cursor = db.rawQuery(sql, null);
+        byte[] temp;
+        Bitmap bitmap;
+        while(cursor.moveToNext()){
+            temp = cursor.getBlob(4);
+            bitmap = getImage(temp);
+            images.add(bitmap);
+        }
+
+        grid = findViewById(R.id.gridView);
+        MyGridAdapter adapter = new MyGridAdapter(this);
+        grid.setAdapter(adapter);
 
         //Spinner
         /*
@@ -147,5 +177,43 @@ public class MainActivity extends AppCompatActivity {
         public void onAnimationStart(Animation animation){
 
         }
+    }
+
+    public class MyGridAdapter extends BaseAdapter{
+        Context context;
+
+        public MyGridAdapter(Context c){
+            context = c;
+        }
+
+        @Override
+        public int getCount(){
+            return  images.size();
+        }
+
+        @Override
+        public long getItemId(int index){
+            return images.indexOf(index);
+        }
+
+        @Override
+        public Object getItem(int index){
+            return images.indexOf(index);
+        }
+
+        @Override
+        public View getView(int index, View arg1, ViewGroup arg2){
+            ImageView imageView = new ImageView(context);
+            imageView.setPadding(5,5,5,5);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setImageBitmap(images.get(index));
+
+            return imageView;
+        }
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 }

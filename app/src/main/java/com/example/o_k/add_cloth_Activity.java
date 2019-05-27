@@ -409,6 +409,8 @@ public class add_cloth_Activity extends AppCompatActivity {
         SQLiteStatement p = db.compileStatement(sql);
         p.bindBlob(1, imageOutput);
         p.executeInsert();
+
+        finish();
     }
 
     //Bitmap chage
@@ -420,9 +422,5 @@ public class add_cloth_Activity extends AppCompatActivity {
         return stream.toByteArray();
     }
 
-    // convert from byte array to bitmap
-    public static Bitmap getImage(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
-    }
 }
 
