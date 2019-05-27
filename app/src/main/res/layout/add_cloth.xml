@@ -217,31 +217,31 @@ android:layout_width="match_parent">
                 android:textColor="#ff000000"
                 android:textStyle="bold"
                 android:layout_gravity="center"
-                android:text="소매 길이"/>
+                android:text="길이"/>
 
             <RadioGroup
-                android:id="@+id/sleeves_length"
+                android:id="@+id/length"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/none_sleeves"
+                    android:id="@+id/short_length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="없다"/>
+                    android:text="짧다"/>
 
                 <RadioButton
-                    android:id="@+id/short_sleeves"
+                    android:id="@+id/medium_length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="반팔/7부/9부"/>
+                    android:text="중간/7부~9부"/>
 
                 <RadioButton
-                    android:id="@+id/long_sleeves"
+                    android:id="@+id/long_length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="긴팔"/>
+                    android:text="길다"/>
 
             </RadioGroup>
         </TableRow>

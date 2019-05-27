@@ -11,6 +11,8 @@ import android.content.pm.ResolveInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
@@ -70,10 +72,16 @@ public class add_cloth_Activity extends AppCompatActivity {
     Uri imageURI, photoURI, albumURI, cameraURI;
 
     //라디오 버튼
-    RadioGroup classiRad, thickRad, sleeveRad;
+    RadioGroup classiRad, thickRad, lengthRad;
 
     //옷 추가 버튼
     Button btnAdd;
+
+    //SQLite
+    private DBHelper helper;
+    private SQLiteDatabase db;
+    String tag = "SQLite";
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,7 +135,7 @@ public class add_cloth_Activity extends AppCompatActivity {
         weatherMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), api.class);
+                Intent intent = new Intent(getApplicationContext(), weather_Activity.class);
                 startActivity(intent);
                 finish();
             }
@@ -149,10 +157,18 @@ public class add_cloth_Activity extends AppCompatActivity {
             }
         });
 
+        helper = new DBHelper(this, "MyDB", null, 1);
+        try{
+            db = helper.getWritableDatabase();
+        }catch (SQLiteException e){
+            Log.e(tag, "데이터베이스를 얻어올 수 없다");
+            finish();
+        }
+
         //라디오 그룹
         classiRad = findViewById(R.id.classification);
         thickRad = findViewById(R.id.thickness);
-        sleeveRad = findViewById(R.id.sleeves_length);
+        lengthRad = findViewById(R.id.length);
 
         //최종 추가버튼
         btnAdd = findViewById(R.id.add_clothe);
@@ -167,11 +183,15 @@ public class add_cloth_Activity extends AppCompatActivity {
                 RadioButton thickBtn = findViewById(thickID);
                 String thickOutput = classiBtn.getText().toString();
 
-                int lengthId = sleeveRad.getCheckedRadioButtonId();
+                int lengthId = lengthRad.getCheckedRadioButtonId();
                 RadioButton lengBtn = findViewById(lengthId);
                 String lengOutput = lengBtn.getText().toString();
 
+                Bitmap bitmap = ((BitmapDrawable)view.getDrawable()).getBitmap();
+                byte[] imageOutput = getBytes(bitmap);
 
+                helper.dbInsert(classiOutput, thickOutput, lengOutput, imageOutput);
+                finish();
             }
         });
     }
@@ -391,6 +411,18 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 
+    //Bitmap chage
+    // convert from bitmap to byte array
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
 
 }
 
