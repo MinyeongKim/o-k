@@ -4,15 +4,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
@@ -65,7 +69,7 @@ public class add_cloth_Activity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CROP = 4444;
     private static final int REQUEST_CAMERA_CROP = 5555;
 
-    ImageView view;
+    ImageView img;
     Button btn_add_image;
 
     String mCurrentPhotoPath;
@@ -78,19 +82,15 @@ public class add_cloth_Activity extends AppCompatActivity {
     Button btnAdd;
 
     //SQLite
-    private DBHelper helper;
-    private SQLiteDatabase db;
-    String tag = "SQLite";
+    DBHelper dbHelper;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_cloth);
 
-        view = findViewById(R.id.image_view);
+        img = findViewById(R.id.image_view);
         btn_add_image = findViewById(R.id.btn_add_image);
-
-        registerForContextMenu(btn_add_image);
 
         //Show Slide Menu
         slideMenu = findViewById(R.id.slideMenu);
@@ -157,43 +157,10 @@ public class add_cloth_Activity extends AppCompatActivity {
             }
         });
 
-        helper = new DBHelper(this, "MyDB", null, 1);
-        try{
-            db = helper.getWritableDatabase();
-        }catch (SQLiteException e){
-            Log.e(tag, "데이터베이스를 얻어올 수 없다");
-            finish();
-        }
-
-        //라디오 그룹
-        classiRad = findViewById(R.id.classification);
-        thickRad = findViewById(R.id.thickness);
-        lengthRad = findViewById(R.id.length);
 
         //최종 추가버튼
         btnAdd = findViewById(R.id.add_clothe);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int classiID = classiRad.getCheckedRadioButtonId();
-                RadioButton classiBtn = findViewById(classiID);
-                String classiOutput =  classiBtn.getText().toString();
-
-                int thickID = thickRad.getCheckedRadioButtonId();
-                RadioButton thickBtn = findViewById(thickID);
-                String thickOutput = classiBtn.getText().toString();
-
-                int lengthId = lengthRad.getCheckedRadioButtonId();
-                RadioButton lengBtn = findViewById(lengthId);
-                String lengOutput = lengBtn.getText().toString();
-
-                Bitmap bitmap = ((BitmapDrawable)view.getDrawable()).getBitmap();
-                byte[] imageOutput = getBytes(bitmap);
-
-                helper.dbInsert(classiOutput, thickOutput, lengOutput, imageOutput);
-                finish();
-            }
-        });
+        dbHelper = new DBHelper(add_cloth_Activity.this, "MyDB.db", null, 1);
     }
 
     //Slide menu animation
@@ -238,6 +205,7 @@ public class add_cloth_Activity extends AppCompatActivity {
                         getAlbum();
                         return true;
                 }
+                checkPermission();
                 return false;
             }
         });
@@ -327,7 +295,7 @@ public class add_cloth_Activity extends AppCompatActivity {
                         cameraFile = createImageFile();
                         cameraURI = Uri.fromFile(cameraFile);
                         cropCamera();
-                        view.setImageURI(imageURI);
+                        img.setImageURI(imageURI);
                     }catch (Exception e){ }
                 } else{
                     Toast.makeText(add_cloth_Activity.this, "사진찍기를 취소하였습니다", Toast.LENGTH_SHORT).show();
@@ -353,14 +321,14 @@ public class add_cloth_Activity extends AppCompatActivity {
             case REQUEST_IMAGE_CROP:
                 if(resultCode == Activity.RESULT_OK){
                     galleryAddPic();
-                    view.setImageURI(albumURI);
+                    img.setImageURI(albumURI);
                 }
                 break;
 
             case REQUEST_CAMERA_CROP:
                 if(resultCode == Activity.RESULT_OK){
                     galleryAddPic();
-                    view.setImageURI(cameraURI);
+                    img.setImageURI(cameraURI);
                 }
                 break;
         }
@@ -411,9 +379,42 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 
+    //추가하기 버튼
+    public void addOnClick(View v){
+        SQLiteDatabase db;
+        String sql;
+
+        //라디오 그룹
+        classiRad = findViewById(R.id.classification);
+        thickRad = findViewById(R.id.thickness);
+        lengthRad = findViewById(R.id.length);
+
+        int classiID = classiRad.getCheckedRadioButtonId();
+        RadioButton classiBtn = findViewById(classiID);
+        String classiOutput =  classiBtn.getText().toString();
+
+        int thickID = thickRad.getCheckedRadioButtonId();
+        RadioButton thickBtn = findViewById(thickID);
+        String thickOutput = thickBtn.getText().toString();
+
+        int lengthId = lengthRad.getCheckedRadioButtonId();
+        RadioButton lengBtn = findViewById(lengthId);
+        String lengOutput = lengBtn.getText().toString();
+
+        byte[] imageOutput = getBytes(img.getDrawable());
+
+        db = dbHelper.getWritableDatabase();
+
+        sql = "INSERT INTO closet VALUES(null,'" + classiOutput + "','" + thickOutput + "','" + lengOutput + "', ?);";
+        SQLiteStatement p = db.compileStatement(sql);
+        p.bindBlob(1, imageOutput);
+        p.executeInsert();
+    }
+
     //Bitmap chage
     // convert from bitmap to byte array
-    public static byte[] getBytes(Bitmap bitmap) {
+    public byte[] getBytes(Drawable d) {
+        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
         return stream.toByteArray();
@@ -423,6 +424,5 @@ public class add_cloth_Activity extends AppCompatActivity {
     public static Bitmap getImage(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
-
 }
 
