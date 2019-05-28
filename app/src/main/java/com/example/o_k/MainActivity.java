@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
@@ -35,8 +36,16 @@ public class MainActivity extends AppCompatActivity {
     Animation showMenu;
     Animation non_showMenu;
     Spinner category;
+    String cate;
     GridView grid;
-    ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+
+    //카테고리 별 이미지 저장소
+    ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
+    ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
+    ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
+    ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
+    ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
+    ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
     //SQLite
     DBHelper dbHelper;
 
@@ -117,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), add_cloth_Activity.class);
                 startActivity(intent);
+
             }
         });
 
@@ -128,32 +138,63 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql = "SELECT * FROM closet";
         Cursor cursor = db.rawQuery(sql, null);
-        byte[] temp;
+        byte[] blob;
+        String cate;
         Bitmap bitmap;
         while(cursor.moveToNext()){
-            temp = cursor.getBlob(4);
-            bitmap = getImage(temp);
-            images.add(bitmap);
+            cate = cursor.getString(1);
+            blob = cursor.getBlob(4);
+            bitmap = getImage(blob);
+            allClothe.add(bitmap);
+            if(cate.equals("상의")){
+                cateTop.add(bitmap);
+            }
+            else if (cate.equals("하의")){
+                cateBottom.add(bitmap);
+            }
+            else if(cate.equals("외투")){
+                cateOuter.add(bitmap);
+            }
+            else {
+                cateEct.add(bitmap);
+            }
         }
 
-        grid = findViewById(R.id.gridView);
-        MyGridAdapter adapter = new MyGridAdapter(this);
-        grid.setAdapter(adapter);
 
         //Spinner
-        /*
         category = findViewById(R.id.category_cloth);
-        grid = findViewById(R.id.gellery)
-        category.setOnItemClickListener(new AdapterView.OnItemSelectedListener(){
+        category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if((parent.getItemAtPosition(position)).equals("전체")){
+                    showImages = allClothe;
+                }
+                if((parent.getItemAtPosition(position)).equals("상의")){
+                    showImages = cateTop;
+                }
+                if((parent.getItemAtPosition(position)).equals("하의")){
+                    showImages = cateBottom;
+                }
+                if((parent.getItemAtPosition(position)).equals("외투")){
+                    showImages = cateOuter;
+                }
+                if((parent.getItemAtPosition(position)).equals("기타")){
+                    showImages = cateEct;
+                }
 
+                //Create GridView
+                grid = findViewById(R.id.gridView);
+                MyGridAdapter adapter = new MyGridAdapter(MainActivity.this);
+                grid.setAdapter(adapter);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent){}
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
-        */
+
+
     }
 
     //Slide menu animation
@@ -188,25 +229,26 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount(){
-            return  images.size();
+            return showImages.size();
         }
 
         @Override
         public long getItemId(int index){
-            return images.indexOf(index);
+            return showImages.indexOf(index);
         }
 
         @Override
         public Object getItem(int index){
-            return images.indexOf(index);
+            return showImages.indexOf(index);
         }
 
         @Override
         public View getView(int index, View arg1, ViewGroup arg2){
             ImageView imageView = new ImageView(context);
-            imageView.setPadding(5,5,5,5);
+            imageView.setPadding(0,0,0,0);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setImageBitmap(images.get(index));
+
+            imageView.setImageBitmap(showImages.get(index));
 
             return imageView;
         }
