@@ -137,9 +137,9 @@
                     android:text="추천 목록"
                     />
 
-                <!-- 리스트목록 / list -->
+                <!-- 리스트목록 / category_cloth -->
                 <Spinner
-                    android:id="@+id/list"
+                    android:id="@+id/category_cloth"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_marginTop="10dp"
@@ -148,64 +148,21 @@
                     android:fontFamily="@font/one"
                     />
 
-                <TableLayout
-                    android:layout_height="match_parent"
+
+                <GridView
+                    android:id="@+id/gridView"
                     android:layout_width="match_parent"
-                    android:id="@+id/clothesTable"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp">
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:columnWidth="90dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="10dp"
+                    android:numColumns="3"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="10dp"
+                    android:layout_below="@+id/category_cloth">
 
-                    <!-- 첫번째 줄 / First row of Clothes -->
-                    <TableRow>
-                        <TextView
-                            android:id="@+id/line1_1"
-                            android:layout_marginLeft="30dp"
-                            android:layout_height="90dp"
-                            android:layout_width="90dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/line1_2"
-                            android:layout_marginLeft="10dp"
-                            android:layout_height="90dp"
-                            android:layout_width="90dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/line1_3"
-                            android:layout_marginLeft="10dp"
-                            android:layout_height="90dp"
-                            android:layout_width="90dp"
-                            />
-                    </TableRow>
-
-
-                    <!-- 두번째 줄 / Second row of Clothes -->
-                    <TableRow>
-                        <TextView
-                            android:id="@+id/line2_1"
-                            android:layout_marginLeft="10dp"
-                            android:layout_height="90dp"
-                            android:layout_width="90dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/line2_2"
-                            android:layout_marginLeft="10dp"
-                            android:layout_height="90dp"
-                            android:layout_width="90dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/line2_3"
-                            android:layout_marginLeft="10dp"
-                            android:layout_height="90dp"
-                            android:layout_width="90dp"
-                            />
-                    </TableRow>
-
-                </TableLayout>
+                </GridView>
 
             </LinearLayout>
 
