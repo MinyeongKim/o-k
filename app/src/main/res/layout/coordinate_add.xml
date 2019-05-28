@@ -11,6 +11,16 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/add_coordinate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/add_button"
+            android:layout_toRightOf="@+id/O-K"
+            />
+
     <!-- 타이틀 / Title -->
     <TextView
         android:id="@+id/O-K"
@@ -98,13 +108,11 @@
         </LinearLayout>
 
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical"
+            android:layout_margin="20dp"
             android:layout_below="@+id/O-K">
 
             <Spinner
@@ -112,22 +120,48 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:entries="@array/category" />
+            <RelativeLayout
+                android:id="@+id/body_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/category_cloth"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+
+                android:layout_toRightOf="@+id/gridView"
+                android:background="@drawable/round">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/body"
+                    android:layout_gravity="center"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+
+            </RelativeLayout>
+
 
             <GridView
                 android:id="@+id/gridView"
-                android:layout_width="150dp"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:columnWidth="90dp"
                 android:gravity="center"
                 android:horizontalSpacing="10dp"
                 android:numColumns="1"
                 android:stretchMode="columnWidth"
-                android:verticalSpacing="10dp"></GridView>
+                android:verticalSpacing="10dp"
+                android:layout_below="@+id/category_cloth">
+
+            </GridView>
 
 
 
 
-        </LinearLayout>
+
+        </RelativeLayout>
 
 
 

@@ -18,6 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -187,18 +190,53 @@ public class weather_Activity extends AppCompatActivity {
                     progressDialog.show();
 
                     Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.MINUTE, -45);
+
 
                     base_date = String.format("%d%02d%02d",cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1,cal.get(Calendar.DATE));
-                    base_time = String.format("%02d00",cal.get(Calendar.HOUR_OF_DAY));
+                    base_time = String.format("%02d%02d",cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+                    //base_time ->  지금은 현재시간을 받아온다.
 
-                    rest_Url = data_url + serviceKey + "&base_date="+ base_date + "&base_time=" + base_time + "&nx=" + lat + "&ny=" + lon + "&_type=json";
+
+                    int cal_time = Integer.parseInt(base_time);
+                    int yesterday =Integer.parseInt(base_date);
+                    yesterday = yesterday - 1;
+                    Log.i("Cal_time is ",  Integer.toString(cal_time));
+                    //cal로 빼고 다시 int로 바꿀 것
+
+                    if (cal_time < 500 && cal_time >= 200){
+                        //현재시간 - 45분 < 0630이면 5시가 base_time
+                        base_time = "0200";
+                    } else if (cal_time < 800 && cal_time >= 500){
+                        base_time= "0500";
+                    } else if (cal_time < 1100 && cal_time >= 800){
+                        base_time= "0800";
+                    } else if (cal_time < 1400 && cal_time >= 1100){
+                        base_time= "1100";
+                    } else if (cal_time < 1700 && cal_time >= 1400){
+                        base_time= "1400";
+                    } else if (cal_time < 2000 && cal_time >= 1700){
+                        base_time= "1700";
+                    } else if (cal_time < 2300 && cal_time >= 2000){
+                        base_time= "2000";
+                    } else if (( cal_time >= 0 && cal_time < 200) || ( cal_time < 2359 && cal_time >= 2300)){
+                        base_date = Integer.toString(yesterday);
+                        base_time= "2300";
+                    }   else {
+                        Log.d("Base Time is","ERROR!");
+                    }
+
+
+
+                    rest_Url = data_url + serviceKey + "&base_date="+ base_date + "&base_time=" + base_time + "&nx=" + lat + "&ny=" + lon +
+                            "&numOfRows=13" + "&pageNo=1" + "&_type=json";
                     //보낼 API주소 정해주기
 
                     getJSON(rest_Url);
 
                     Toast.makeText(
                             getApplicationContext(),
-                            "당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude + "\n현재날짜 :" + base_date + "\n현재시간 :" + base_time,
+                            "당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude + "\nAPI 사용 날짜 :" + base_date + "\nAPI 사용 시간 :" + base_time,
                             Toast.LENGTH_LONG).show();
                 } else {
                     // GPS 를 사용할수 없으므로
@@ -211,11 +249,10 @@ public class weather_Activity extends AppCompatActivity {
 
 
 
-
-
-
-
     }
+
+
+
 
     //Slide menu animation
     private class SlidingPageAnimationListener implements Animation.AnimationListener{
@@ -284,18 +321,6 @@ public class weather_Activity extends AppCompatActivity {
     }
 
 
-    private String getDate() {
-        mNow = System.currentTimeMillis();
-        mDate = new Date(mNow);
-        return dateFormat.format(mDate);
-    }
-
-    private String getTime() {
-        mNow = System.currentTimeMillis();
-        mTime = new Date(mNow);
-        return timeFormat.format(mTime);
-    }
-
 
     private final MyHandler mHandler = new MyHandler(weather_Activity.this);
 
@@ -334,10 +359,9 @@ public class weather_Activity extends AppCompatActivity {
 
             public void run() {
 
-                String result;
+                String result="";
 
                 try {
-
                     Log.d(TAG, rest_Url);
                     URL url = new URL(rest_Url);
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -345,7 +369,6 @@ public class weather_Activity extends AppCompatActivity {
 
                     httpURLConnection.setReadTimeout(3000);
                     httpURLConnection.setConnectTimeout(3000);
-                    //httpURLConnection.setDoOutput(true);
                     httpURLConnection.setDoInput(true);
                     httpURLConnection.setRequestMethod("GET");
                     httpURLConnection.setUseCaches(false);
@@ -375,12 +398,50 @@ public class weather_Activity extends AppCompatActivity {
                         sb.append(line);
                     }
 
-                    bufferedReader.close();
-                    httpURLConnection.disconnect();
+                    //JSONArray jsonArray = new JSONArray(jsonHtml.toString());
+                    JSONObject obj = new JSONObject(sb.toString());//parser.parse(sb);
 
-                    result = sb.toString().trim();
+                    JSONObject parse_response = (JSONObject) obj.get("response");
+                    // response 로 부터 body 찾아옵니다.
+                    JSONObject parse_body = (JSONObject) parse_response.get("body");
+                    //body 로 부터 items 받아옵니다.
+                    JSONObject parse_items = (JSONObject) parse_body.get("items");
+                    // items로 부터 itemlist 를 받아오기 itemlist : 뒤에 [ 로 시작하므로 jsonarray이다
+                    JSONArray parse_item = (JSONArray) parse_items.get("item");
 
+                    String category;
+                    JSONObject weather;
+                    // parse_item은 배열형태이기 때문에 하나씩 데이터를 하나씩 가져올때 사용합니다.
+                    // 필요한 데이터만 가져오려고합니다.
+                    Log.i("Parse_item.length is ",Integer.toString(parse_item.length()));
+                    for (int i = 0; i < parse_item.length(); i++) {
+                        weather = (JSONObject) parse_item.get(i);
+                        double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                        category = (String) weather.get("category");
+                        // 출력합니다.
+                        Log.i("category : ", category);
+                        Log.i(" fcst_Value : " , Double.toString(fcst_Value));
 
+                        bufferedReader.close();
+                        httpURLConnection.disconnect();
+
+                        if(category.equals("POP")){
+                            result += "강수확률 " + fcst_Value + "%\n";
+                        }
+                        else if (category.equals("T3H")){
+                            result += "기온: " + fcst_Value + "℃\n";
+                        } else if (category.equals("SKY")){
+                            if (fcst_Value == 1) { result += "맑음\n";}
+                            else if (fcst_Value == 3) {result += "구름 많음\n";}
+                            else if (fcst_Value == 4) {result += "흐림\n";}
+                            else {
+                                result += "";
+                            }
+                        } else {
+                            result += "";
+                        }
+
+                    }
                 } catch (Exception e) {
                     result = e.toString();
                 }
@@ -394,24 +455,5 @@ public class weather_Activity extends AppCompatActivity {
         thread.start();
     }
 
-    private Calendar getLastBaseTime(Calendar calBase) {
-
-        int t = calBase.get(Calendar.HOUR_OF_DAY);
-
-        if (t < 2) {
-
-            calBase.add(Calendar.DATE, -1);
-
-            calBase.set(Calendar.HOUR_OF_DAY, 23);
-
-        } else {
-
-            calBase.set(Calendar.HOUR_OF_DAY, t - (t + 1) % 3);
-
-        }
-
-        return calBase;
-
-    }
 
 }
