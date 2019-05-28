@@ -412,6 +412,8 @@ public class add_cloth_Activity extends AppCompatActivity {
         p.bindBlob(1, imageOutput);
         p.executeInsert();
 
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
         finish();
     }
 

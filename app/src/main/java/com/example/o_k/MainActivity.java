@@ -9,6 +9,9 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -20,6 +23,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,6 +33,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     boolean isSlideOpen = false;
+    boolean isImageMenu = false;
     Button btnAddClothe;
     Button btnMenu;
     Button closetMenu, weatherMenu, coordiMenu, settingMenu;
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), add_cloth_Activity.class);
                 startActivity(intent);
-
+                finish();
             }
         });
 
@@ -249,6 +254,34 @@ public class MainActivity extends AppCompatActivity {
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             imageView.setImageBitmap(showImages.get(index));
+
+            grid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    PopupMenu popup = new PopupMenu(MainActivity.this, view);
+
+                    MenuInflater inflater = popup.getMenuInflater();
+                    Menu menu = popup.getMenu();
+
+                    //byte[] temp = parent.getItemAtPosition(position);
+                    inflater.inflate(R.menu.image_reove_popupmenu, menu);
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()){
+                                case R.id.removeImage:
+                                    int checked = grid.getCheckedItemPosition();
+                                    showImages.remove(checked);
+                                    //String sql2 = "DETETE FROM closet WHERE image = " + ";";
+                                    return true;
+                            }
+                            return false;
+                        }
+                    });
+                    popup.show();
+                    return false;
+                }
+            });
 
             return imageView;
         }
