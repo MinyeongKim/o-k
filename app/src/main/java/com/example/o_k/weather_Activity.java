@@ -38,19 +38,22 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 public class weather_Activity extends AppCompatActivity {
-    boolean isSlideOpen = false;
-    Button btnMenu;
-    Button closetMenu, weatherMenu, coordiMenu, settingMenu;
-    LinearLayout slideMenu;
-    Animation showMenu;
-    Animation non_showMenu;
-    private Button btnShowLocation;
+    private boolean isSlideOpen = false;
+    private Button btnMenu;
+    private Button closetMenu;
+    private Button weatherMenu;
+    private Button coordiMenu;
+    private Button settingMenu;
+    private LinearLayout slideMenu;
+    private Animation showMenu;
+    private Animation non_showMenu;
     private TextView txtLat;
     private TextView txtLon;
     private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
@@ -59,25 +62,25 @@ public class weather_Activity extends AppCompatActivity {
     private boolean isAccessCoarseLocation = false;
     private boolean isPermission = false;
     private static final String TAG = "imagesearchexample";
-    public static final int LOAD_SUCCESS = 101;
+    private static final int LOAD_SUCCESS = 101;
 
     //API 사용
     long mNow;
     Date mDate;
     Date mTime;
-    String base_date;
-    String base_time;
-    String lat;
-    String lon;
+    private String base_date;
+    private String base_time;
+    private String lat;
+    private String lon;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
     SimpleDateFormat timeFormat = new SimpleDateFormat("hhmm");
 
 
 
-    String data_url = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastSpaceData";
-    String serviceKey = "?serviceKey=%2FYxsvH0O0av8Q7Fd7H7sW2yctGe4Oqfd4MWXhgUrqvlLAf%2FeKhdAaKinxbcKH1kcpebfDxp96jjuW4E8dSLdog%3D%3D";
-    String rest_Url;
+    private final String data_url = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastSpaceData";
+    private final String serviceKey = "?serviceKey=%2FYxsvH0O0av8Q7Fd7H7sW2yctGe4Oqfd4MWXhgUrqvlLAf%2FeKhdAaKinxbcKH1kcpebfDxp96jjuW4E8dSLdog%3D%3D";
+    private String rest_Url;
 
 
 
@@ -86,18 +89,18 @@ public class weather_Activity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private TextView textviewJSONText;
 
-    Spinner category;
-    GridView grid;
+    private Spinner category;
+    private GridView grid;
 
     //카테고리 별 이미지 저장소
-    ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
+    private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
     //SQLite
-    DBHelper dbHelper;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,7 +178,7 @@ public class weather_Activity extends AppCompatActivity {
          * 코드 넣기
          * */
 
-        btnShowLocation = (Button) findViewById(R.id.refresh);
+        Button btnShowLocation = (Button) findViewById(R.id.refresh);
         //txtLat = (TextView) findViewById(R.id.tv_latitude);
         //txtLon = (TextView) findViewById(R.id.tv_longitude);
         textviewJSONText = findViewById(R.id.weatherBox);
@@ -208,6 +211,7 @@ public class weather_Activity extends AppCompatActivity {
             }
         }
 
+        cursor.close();
 
         //Spinner
         category = (Spinner)findViewById(R.id.category_cloth);
@@ -416,7 +420,7 @@ public class weather_Activity extends AppCompatActivity {
     private static class MyHandler extends Handler {
         private final WeakReference<weather_Activity> weakReference;
 
-        public MyHandler(weather_Activity weather_activity) {
+        MyHandler(weather_Activity weather_activity) {
             weakReference = new WeakReference<weather_Activity>(weather_activity);
         }
 
@@ -441,7 +445,7 @@ public class weather_Activity extends AppCompatActivity {
     }
 
 
-    public void getJSON(final String rest_Url) {
+    private void getJSON(final String rest_Url) {
 
         Thread thread = new Thread(new Runnable() {
 
@@ -475,7 +479,7 @@ public class weather_Activity extends AppCompatActivity {
                     }
 
 
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
                     StringBuilder sb = new StringBuilder();
@@ -543,10 +547,10 @@ public class weather_Activity extends AppCompatActivity {
         thread.start();
     }
 
-    public class MyGridAdapter extends BaseAdapter {
-        Context context;
+    class MyGridAdapter extends BaseAdapter {
+        final Context context;
 
-        public MyGridAdapter(Context c){
+        MyGridAdapter(Context c){
             context = c;
         }
 
@@ -578,7 +582,7 @@ public class weather_Activity extends AppCompatActivity {
     }
 
     // convert from byte array to bitmap
-    public static Bitmap getImage(byte[] image) {
+    private static Bitmap getImage(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 

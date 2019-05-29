@@ -1,16 +1,14 @@
 package com.example.o_k;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-
-public class DBHelper extends SQLiteOpenHelper {
+/**
+ * @brief Database manager
+ * @detail Create a Database and manage version of the Database
+ */
+class DBHelper extends SQLiteOpenHelper {
 
     //생성자 - database 파일을 생성한다.
     /*
@@ -23,12 +21,18 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //DB 처음 만들때 호출. - 테이블 생성 등의 초기 처리.
+
+    /**
+     * @brief Create database
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE closet (_id integer primary key autoincrement, category TEXT, thickness TEXT, length TEXT, image BLOB);");
     }
 
-    //DB 업그레이드 필요 시 호출. (version값에 따라 반응)
+    /**
+     * @brief Manage version of database
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS closet");

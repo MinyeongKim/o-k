@@ -18,16 +18,19 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 public class setting_Activity extends AppCompatActivity {
-    boolean isSlideOpen = false;
-    Button btnMenu;
-    Button closetMenu, weatherMenu, coordiMenu, settingMenu;
-    LinearLayout slideMenu;
-    Animation showMenu;
-    Animation non_showMenu;
-    RadioGroup rg;
+    private boolean isSlideOpen = false;
+    private Button btnMenu;
+    private Button closetMenu;
+    private Button weatherMenu;
+    private Button coordiMenu;
+    private Button settingMenu;
+    private LinearLayout slideMenu;
+    private Animation showMenu;
+    private Animation non_showMenu;
+    private RadioGroup rg;
 
-    NotificationManager notificationManager;
-    PendingIntent intent ;
+    private NotificationManager notificationManager;
+    private PendingIntent intent ;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)

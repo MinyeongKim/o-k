@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class BaseActivity extends Activity {
-    public Typeface mTypeface = null;
+    private Typeface mTypeface = null;
 
     @Override
     public void setContentView(int layoutResID){

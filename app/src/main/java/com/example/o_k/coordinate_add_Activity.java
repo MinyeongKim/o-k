@@ -9,9 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,31 +20,33 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
 
 public class coordinate_add_Activity extends AppCompatActivity {
-    boolean isSlideOpen = false;
-    Button btnMenu;
-    Button closetMenu, weatherMenu, coordiMenu, settingMenu;
-    LinearLayout slideMenu;
-    Animation showMenu;
-    Animation non_showMenu;
+    private boolean isSlideOpen = false;
+    private Button btnMenu;
+    private Button closetMenu;
+    private Button weatherMenu;
+    private Button coordiMenu;
+    private Button settingMenu;
+    private LinearLayout slideMenu;
+    private Animation showMenu;
+    private Animation non_showMenu;
 
-    Spinner category;
-    GridView grid;
+    private Spinner category;
+    private GridView grid;
 
     //카테고리 별 이미지 저장소
-    ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
+    private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
     //SQLite
-    DBHelper dbHelper;
+    private DBHelper dbHelper;
 
 
     @Override
@@ -147,6 +146,7 @@ public class coordinate_add_Activity extends AppCompatActivity {
                 cateEct.add(bitmap);
             }
         }
+        cursor.close();
 
 
         //Spinner
@@ -263,10 +263,10 @@ public class coordinate_add_Activity extends AppCompatActivity {
         }
     }
 
-    public class MyGridAdapter extends BaseAdapter {
-        Context context;
+    class MyGridAdapter extends BaseAdapter {
+        final Context context;
 
-        public MyGridAdapter(Context c){
+        MyGridAdapter(Context c){
             context = c;
         }
 
@@ -299,7 +299,7 @@ public class coordinate_add_Activity extends AppCompatActivity {
     }
 
     // convert from byte array to bitmap
-    public static Bitmap getImage(byte[] image) {
+    private static Bitmap getImage(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 

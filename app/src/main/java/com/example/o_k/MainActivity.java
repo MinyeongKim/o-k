@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
@@ -25,34 +23,34 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    boolean isSlideOpen = false;
+    private boolean isSlideOpen = false;
     boolean isImageMenu = false;
-    Button btnAddClothe;
-    Button btnMenu;
-    Button closetMenu, weatherMenu, coordiMenu, settingMenu;
-    LinearLayout slideMenu;
-    Animation showMenu;
-    Animation non_showMenu;
-    Spinner category;
+    private Button btnAddClothe;
+    private Button btnMenu;
+    private Button closetMenu;
+    private Button weatherMenu;
+    private Button coordiMenu;
+    private Button settingMenu;
+    private LinearLayout slideMenu;
+    private Animation showMenu;
+    private Animation non_showMenu;
+    private Spinner category;
     String cate;
-    GridView grid;
+    private GridView grid;
 
     //카테고리 별 이미지 저장소
-    ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
+    private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
     //SQLite
-    DBHelper dbHelper;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +133,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         //Read Data
+        readData();
+
+        //Spinner
+        spinner();
+
+    }
+
+    //Slide menu animation
+    /**
+     * @brief Menu animation
+     * @detail If you click menu_button, the menu is visible or invisible
+     * @var boolean isSlide
+     * menu flag visible = true, invisible = false
+     */
+    private class SlidingPageAnimationListener implements Animation.AnimationListener{
+        @Override
+        public void onAnimationEnd(Animation animation){
+            if(isSlideOpen){
+                slideMenu.setVisibility(View.INVISIBLE);
+                isSlideOpen = false;
+            }
+            else{
+                isSlideOpen = true;
+            }
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation){
+
+        }
+        @Override
+        public void onAnimationStart(Animation animation){
+
+        }
+    }
+
+    /**
+     * @brief Read data to database
+     * @detail Categorize read data
+     */
+    public void readData(){
         dbHelper = new DBHelper(MainActivity.this, "MyDB.db", null, 1);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql = "SELECT * FROM closet";
@@ -160,13 +196,19 @@ public class MainActivity extends AppCompatActivity {
             else if(cate.equals("외투")){
                 cateOuter.add(bitmap);
             }
-            else {
+            else if(cate.equals("기타")){
                 cateEct.add(bitmap);
             }
         }
 
+        cursor.close();
+    }
 
-        //Spinner
+    /**
+     * @brief Spinner
+     * @datail Show images that fit the selected category
+     */
+    public void spinner(){
         category = findViewById(R.id.category_cloth);
         category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -191,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 grid = findViewById(R.id.gridView);
                 MyGridAdapter adapter = new MyGridAdapter(MainActivity.this);
                 grid.setAdapter(adapter);
+
             }
 
             @Override
@@ -199,36 +242,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
-    //Slide menu animation
-    private class SlidingPageAnimationListener implements Animation.AnimationListener{
-        @Override
-        public void onAnimationEnd(Animation animation){
-            if(isSlideOpen){
-                slideMenu.setVisibility(View.INVISIBLE);
-                isSlideOpen = false;
-            }
-            else{
-                isSlideOpen = true;
-            }
-        }
+    /**
+     * @brief To use GridView
+     * @detail Assign the image into the grid view
+     */
+    class MyGridAdapter extends BaseAdapter{
+        final Context context;
 
-        @Override
-        public void onAnimationRepeat(Animation animation){
-
-        }
-        @Override
-        public void onAnimationStart(Animation animation){
-
-        }
-    }
-
-    public class MyGridAdapter extends BaseAdapter{
-        Context context;
-
-        public MyGridAdapter(Context c){
+        MyGridAdapter(Context c){
             context = c;
         }
 
@@ -255,40 +278,20 @@ public class MainActivity extends AppCompatActivity {
 
             imageView.setImageBitmap(showImages.get(index));
 
-            grid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    PopupMenu popup = new PopupMenu(MainActivity.this, view);
-
-                    MenuInflater inflater = popup.getMenuInflater();
-                    Menu menu = popup.getMenu();
-
-                    //byte[] temp = parent.getItemAtPosition(position);
-                    inflater.inflate(R.menu.image_reove_popupmenu, menu);
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()){
-                                case R.id.removeImage:
-                                    int checked = grid.getCheckedItemPosition();
-                                    showImages.remove(checked);
-                                    //String sql2 = "DETETE FROM closet WHERE image = " + ";";
-                                    return true;
-                            }
-                            return false;
-                        }
-                    });
-                    popup.show();
-                    return false;
-                }
-            });
-
             return imageView;
         }
     }
 
     // convert from byte array to bitmap
-    public static Bitmap getImage(byte[] image) {
+
+    /**
+     * @brief Change byte array
+     * @detail Conver from byte array to bitmap
+     * @param image
+     * byte array to change bitmap
+     * @return BitmapFactory.decodeByteArray(image, 0, image.length)
+     */
+    private static Bitmap getImage(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 }

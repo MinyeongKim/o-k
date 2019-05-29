@@ -10,13 +10,16 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 public class coordinate_show_Activity extends AppCompatActivity {
-    boolean isSlideOpen = false;
-    Button btnMenu;
-    Button btnAddCoordi;
-    Button closetMenu, weatherMenu, coordiMenu, settingMenu;
-    LinearLayout slideMenu;
-    Animation showMenu;
-    Animation non_showMenu;
+    private boolean isSlideOpen = false;
+    private Button btnMenu;
+    private Button btnAddCoordi;
+    private Button closetMenu;
+    private Button weatherMenu;
+    private Button coordiMenu;
+    private Button settingMenu;
+    private LinearLayout slideMenu;
+    private Animation showMenu;
+    private Animation non_showMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

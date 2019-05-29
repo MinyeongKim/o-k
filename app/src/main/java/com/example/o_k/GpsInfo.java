@@ -22,17 +22,17 @@ public class GpsInfo extends Service implements LocationListener {
     private final Context mContext;
 
     // 현재 GPS 사용유무
-    boolean isGPSEnabled = false;
+    private boolean isGPSEnabled = false;
 
     // 네트워크 사용유무
-    boolean isNetworkEnabled = false;
+    private boolean isNetworkEnabled = false;
 
     // GPS 상태값
-    boolean isGetLocation = false;
+    private boolean isGetLocation = false;
 
-    Location location;
-    double lat; // 위도
-    double lon; // 경도
+    private Location location;
+    private double lat; // 위도
+    private double lon; // 경도
 
     // 최소 GPS 정보 업데이트 거리 10미터
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
@@ -40,7 +40,7 @@ public class GpsInfo extends Service implements LocationListener {
     // 최소 GPS 정보 업데이트 시간 밀리세컨이므로 1분
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
 
-    protected LocationManager locationManager;
+    private LocationManager locationManager;
 
     public GpsInfo(Context context) {
         this.mContext = context;
@@ -48,7 +48,7 @@ public class GpsInfo extends Service implements LocationListener {
     }
 
     @TargetApi(23)
-    public Location getLocation() {
+    private void getLocation() {
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(
                         mContext, android.Manifest.permission.ACCESS_FINE_LOCATION )
@@ -57,7 +57,7 @@ public class GpsInfo extends Service implements LocationListener {
                         mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
 
-            return null;
+            return;
         }
 
         try {
@@ -115,7 +115,6 @@ public class GpsInfo extends Service implements LocationListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return location;
     }
 
     /**

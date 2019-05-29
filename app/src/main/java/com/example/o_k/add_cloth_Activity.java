@@ -3,21 +3,14 @@ package com.example.o_k;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,16 +22,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -51,16 +41,17 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class add_cloth_Activity extends AppCompatActivity {
-    boolean isSlideOpen = false;
-    Button btnMenu;
-    Button closetMenu, weatherMenu, coordiMenu, settingMenu;
-    LinearLayout slideMenu;
-    Animation showMenu;
-    Animation non_showMenu;
+    private boolean isSlideOpen = false;
+    private Button btnMenu;
+    private Button closetMenu;
+    private Button weatherMenu;
+    private Button coordiMenu;
+    private Button settingMenu;
+    private LinearLayout slideMenu;
+    private Animation showMenu;
+    private Animation non_showMenu;
 
     //이미지 선택 1)사진찍기 2)앨범에서 선택
     private static final int MY_PERMISSION_CAMERA = 1111;
@@ -69,22 +60,31 @@ public class add_cloth_Activity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CROP = 4444;
     private static final int REQUEST_CAMERA_CROP = 5555;
 
-    ImageView img;
-    Button btn_add_image;
+    private ImageView img;
+    private Button btn_add_image;
 
-    String mCurrentPhotoPath;
-    Uri imageURI, photoURI, albumURI, cameraURI;
+    private String mCurrentPhotoPath;
+    private Uri imageURI;
+    private Uri photoURI;
+    private Uri albumURI;
+    private Uri cameraURI;
 
     //라디오 버튼
-    RadioGroup classiRad, thickRad, lengthRad;
+    private RadioGroup classiRad;
+    private RadioGroup thickRad;
+    private RadioGroup lengthRad;
 
     //옷 추가 버튼
-    Button btnAdd;
+    private Button btnAdd;
 
     //SQLite
-    DBHelper dbHelper;
+    private DBHelper dbHelper;
 
-
+    /**
+     * @brief onCreate() method add_cloth_Activity.java
+     * @detail Can add clothe image and select each category info to Database
+     * @date 2019.05.15
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_cloth);
@@ -164,6 +164,13 @@ public class add_cloth_Activity extends AppCompatActivity {
     }
 
     //Slide menu animation
+
+    /**
+     * @brief Menu animation
+     * @detail If you click menu_button, the menu is visible or invisible
+     * @var boolean isSlide
+     * menu flag visible = true, invisible = false
+     */
     private class SlidingPageAnimationListener implements Animation.AnimationListener{
         @Override
         public void onAnimationEnd(Animation animation){
@@ -186,7 +193,12 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 
-    //버튼 clickLintener
+    /**
+     * @brief Add image button
+     * @detail
+     * If click 'take a picture', link camera. So you can take a picture and crop image.
+     * If click 'get album', link gallery. So you can get image in gallery and crop image.
+     */
     public void mOnClick(View v){
         PopupMenu popup = new PopupMenu(add_cloth_Activity.this, v);
 
@@ -213,6 +225,13 @@ public class add_cloth_Activity extends AppCompatActivity {
     }
 
     //사진 가져오기
+
+    /**
+     * @brief Take a picture
+     * @detail Take a picture using camera app and start onActivityResult()
+     * @var Intent takePictureIntent
+     * intent variance using camera app
+     */
     private void captureCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(takePictureIntent.resolveActivity(getPackageManager()) != null){
@@ -232,7 +251,17 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 
-    public File createImageFile() throws  IOException{
+    /**
+     * @brief Create Image File to store image
+     * @detail Set file name and path to store the picture file.
+     * @var File image
+     * Variance to store image file
+     * @var String mCurrentPhotoPath
+     *  File's path variance to store image
+     * @return image
+     * @throws IOException
+     */
+    private File createImageFile() throws  IOException{
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = timeStamp + ".jpg";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -241,12 +270,22 @@ public class add_cloth_Activity extends AppCompatActivity {
         return image;
     }
 
+    /**
+     * @brief Get image to gallery
+     * @detail Get image and start onActivityResult()
+     */
     private void getAlbum(){
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         startActivityForResult(intent, REQUEST_TAKE_ALBUM);
     }
 
+    /**
+     * @brief Store image file
+     * @detail Save the image file using the path saved in mCurrentPhotoPath
+     * @var String mCurrentPhotoPath
+     * File's path variance to store image
+     */
     private void galleryAddPic(){
         Log.i("galleryAddPic", "Call");
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -257,7 +296,12 @@ public class add_cloth_Activity extends AppCompatActivity {
         sendBroadcast(mediaScanIntent);
     }
 
-    public void cropImage(){
+
+    /**
+     * @brief Crop image that got from the gallery
+     * @detail Obtain the permission and crop image
+     */
+    private void cropImage(){
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
 
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -273,7 +317,11 @@ public class add_cloth_Activity extends AppCompatActivity {
         startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
     }
 
-    public void cropCamera(){
+    /**
+     * @brief Crop image that toke a picture
+     * @detail Obtain the permission and crop image
+     */
+    private void cropCamera(){
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
 
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -287,6 +335,17 @@ public class add_cloth_Activity extends AppCompatActivity {
         startActivityForResult(cropIntent, REQUEST_CAMERA_CROP);
     }
 
+    /**
+     * @brief To use the results from startActivityForResult
+     * @param requestCode
+     * second argument value of startActivityForResult()
+     * @param resultCode
+     * success or failure value set in recalled activity
+     * @param data
+     * Results saved from invoked activity
+     *
+     *
+     */
     @Override
     protected  void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (requestCode){
@@ -298,7 +357,7 @@ public class add_cloth_Activity extends AppCompatActivity {
                         cameraURI = Uri.fromFile(cameraFile);
                         cropCamera();
                         img.setImageURI(imageURI);
-                    }catch (Exception e){ }
+                    }catch (Exception ignored){  }
                 } else{
                     Toast.makeText(add_cloth_Activity.this, "사진찍기를 취소하였습니다", Toast.LENGTH_SHORT).show();
                 }
@@ -336,6 +395,9 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 
+    /**
+     * @brief Check permission to use camera app
+     */
     private void checkPermission(){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             if((ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) ||
@@ -382,6 +444,14 @@ public class add_cloth_Activity extends AppCompatActivity {
     }
 
     //추가하기 버튼
+
+    /**
+     * @brief Store result to database
+     * @detail Store the selected radio button values for each category and images in the database
+     * @var int classID
+     * @var int thickID
+     * @var int lengthID
+     */
     public void addOnClick(View v){
         SQLiteDatabase db;
         String sql;
@@ -419,7 +489,13 @@ public class add_cloth_Activity extends AppCompatActivity {
 
     //Bitmap chage
     // convert from bitmap to byte array
-    public byte[] getBytes(Drawable d) {
+
+    /**
+     * @brief Chage bitmap
+     * @detail Conver from bitmap to byte array to store image file into database
+     * @return stream.toByteArray()
+     */
+    private byte[] getBytes(Drawable d) {
         Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
