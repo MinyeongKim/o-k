@@ -1,3 +1,11 @@
+/**
+ * @file setting_Activity.java
+ * @date 2019/05/05
+ * @author Anyeseu Oh / Team O-K
+ * @brief Setting menu of our application
+ */
+
+
 package com.example.o_k;
 
 import android.app.Notification;
@@ -18,6 +26,14 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 public class setting_Activity extends AppCompatActivity {
+    /**
+     * @var NotificationManager notificationManager
+     * Variable for push notificaiton
+     *
+     * @var PendingIntent intent
+     * PendingIntent means the intent to display notification in the status notification window.
+     */
+
     private boolean isSlideOpen = false;
     private Button btnMenu;
     private Button closetMenu;
@@ -36,6 +52,13 @@ public class setting_Activity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /**
+         * @brief Menu animation
+         * @detail If you click menu_button, the menu is visible or invisible
+         * @var boolean isSlide
+         * menu flag visible = true, invisible = false
+         */
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
 
@@ -110,7 +133,7 @@ public class setting_Activity extends AppCompatActivity {
 
 
 
-            Notification.Builder builder = new Notification.Builder(this)
+        Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.refresh) // 아이콘 설정하지 않으면 오류남
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setContentTitle("알림 제목") // 제목 설정
@@ -127,37 +150,37 @@ public class setting_Activity extends AppCompatActivity {
 
 
 /**
-        Button sw = (Button)findViewById(R.id.clean_push);
-        //스위치의 체크 이벤트를 위한 리스너 등록
-        sw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //Toast.makeText(setting_Activity.this, "체크상태 = " + isChecked, Toast.LENGTH_SHORT).show();
+ Button sw = (Button)findViewById(R.id.clean_push);
+ //스위치의 체크 이벤트를 위한 리스너 등록
+ sw.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View v) {
+// TODO Auto-generated method stub
+//Toast.makeText(setting_Activity.this, "체크상태 = " + isChecked, Toast.LENGTH_SHORT).show();
 
-                //if (isChecked == true) {
-                    intent = PendingIntent.getActivity(setting_Activity.this, 0,
-                            new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+//if (isChecked == true) {
+intent = PendingIntent.getActivity(setting_Activity.this, 0,
+new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-                    Notification.Builder builder = new Notification.Builder(setting_Activity.this)
-                            .setSmallIcon(R.drawable.ic_launcher_background) // 아이콘 설정하지 않으면 오류남
-                            .setDefaults(Notification.DEFAULT_ALL)
-                            .setContentTitle("알림 제목") // 제목 설정
-                            .setContentText("알림 내용") // 내용 설정
-                            .setTicker("한줄 출력") // 상태바에 표시될 한줄 출력
-                            .setAutoCancel(true)
-                            .setContentIntent(intent);
+Notification.Builder builder = new Notification.Builder(setting_Activity.this)
+.setSmallIcon(R.drawable.ic_launcher_background) // 아이콘 설정하지 않으면 오류남
+.setDefaults(Notification.DEFAULT_ALL)
+.setContentTitle("알림 제목") // 제목 설정
+.setContentText("알림 내용") // 내용 설정
+.setTicker("한줄 출력") // 상태바에 표시될 한줄 출력
+.setAutoCancel(true)
+.setContentIntent(intent);
 
-                    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    notificationManager.notify(0, builder.build());
-                    Log.i("Is checked is true is ", "근데 왜 출력안돼 ㅡㅡ");
-                }
+notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+notificationManager.notify(0, builder.build());
+Log.i("Is checked is true is ", "근데 왜 출력안돼 ㅡㅡ");
+}
 
-          //  }
+//  }
 
-        });
+});
 
-*/
+ */
 
 
 
@@ -166,6 +189,15 @@ public class setting_Activity extends AppCompatActivity {
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
+                /**
+                 * @brief onCheckedChanged() is changing the state of notification method
+                 * @detail
+                 * if checked ID is radBtnGreen -> change theme to Green
+                 * if checked ID is radBtnLightGreen -> change theme to Light Green
+                 * if checked ID is radBtnYellow -> change theme to Yellow
+                 * if checked ID is radBtnLightPink -> change theme to Light Pink
+                 * if checked ID is radBtnPink -> change theme to Pink
+                 */
                 switch (checkedId) {
                     case R.id.radBtnGreen:
                         Toast.makeText(getApplicationContext(), "현재 테마 : 초록색", Toast.LENGTH_SHORT).show();

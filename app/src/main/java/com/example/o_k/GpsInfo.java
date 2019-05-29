@@ -1,3 +1,11 @@
+/**
+ * @file GpsInfo.java
+ * @date 2019/05/28
+ * @author Anyeseu Oh / Team O-K
+ * @brief Call GPS and Permit the using GPS permittion of our application
+ */
+
+
 package com.example.o_k;
 
 
@@ -18,6 +26,30 @@ import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 
 public class GpsInfo extends Service implements LocationListener {
+
+    /**
+     * @var boolean isGPSEnabled
+     * Currently using GPS
+     *
+     * @var boolean isNetworkEnabled
+     * Network usage status
+     *
+     * @var boolean isGetLocation
+     * GPS Status Value
+     *
+     * @var double lat
+     * latitude
+     *
+     * @var double lon
+     * longitude
+     *
+     * @var private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES
+     * Minimum GPS information update distance 10 meters
+     *
+     * @var private static final long MIN_TIME_BW_UPDATES
+     * Minimum GPS information update time in milliseconds, 1 minute.
+     */
+
 
     private final Context mContext;
 
@@ -49,6 +81,10 @@ public class GpsInfo extends Service implements LocationListener {
 
     @TargetApi(23)
     private void getLocation() {
+        /**
+         * @brief get Location
+         * @detail It will be build version 23
+         */
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(
                         mContext, android.Manifest.permission.ACCESS_FINE_LOCATION )
@@ -117,47 +153,52 @@ public class GpsInfo extends Service implements LocationListener {
         }
     }
 
-    /**
-     * GPS 종료
-     * */
+
     public void stopUsingGPS(){
+        /**
+         * @brief GPS Stop
+         * */
         if(locationManager != null){
             locationManager.removeUpdates(GpsInfo.this);
         }
     }
 
-    /**
-     * 위도값을 가져옵니다.
-     * */
+
     public double getLatitude(){
+        /**
+         * @brief Gets the latitude value.
+         **/
         if(location != null){
             lat = location.getLatitude();
         }
         return lat;
     }
 
-    /**
-     * 경도값을 가져옵니다.
-     * */
+
     public double getLongitude(){
+        /**
+         * @brief Gets the Longitude value.
+         **/
         if(location != null){
             lon = location.getLongitude();
         }
         return lon;
     }
 
-    /**
-     * GPS 나 wife 정보가 켜져있는지 확인합니다.
-     * */
+
     public boolean isGetLocation() {
+        /**
+         * @brief Check whether the GPS or wif information is turned on.
+         **/
         return this.isGetLocation;
     }
 
-    /**
-     * GPS 정보를 가져오지 못했을때
-     * 설정값으로 갈지 물어보는 alert 창
-     * */
+
     public void showSettingsAlert(){
+        /**
+         * @brief Alert window to ask if you want to go to the settings
+         * when you cannot get GPS information
+         * */
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         alertDialog.setTitle("GPS 사용유무셋팅");

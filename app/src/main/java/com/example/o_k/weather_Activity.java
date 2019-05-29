@@ -1,3 +1,11 @@
+/**
+ * @file weather_Activity.java
+ * @date 2019/05/28
+ * @author Anyeseu Oh / Team O-K
+ * @brief Weather page of our application
+ */
+
+
 package com.example.o_k;
 
 import android.Manifest;
@@ -45,6 +53,32 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class weather_Activity extends AppCompatActivity {
+    /**
+     * @var String base_time
+     * Time to send to api
+     *
+     * @var String base_date
+     * Date to send to api / If the current date and the base_date used for api are different, subtract one day.
+     *
+     * @var String lat
+     * Remove the decimal point of received latitude and send it to api.
+     *
+     * @var String lon
+     * Remove the decimal point of received longitude and send it to api.
+     *
+     * @var data_url
+     * Address of api to use
+     *
+     * @var seviceKey
+     * Private api authentication key assigned to the team
+     *
+     * @var rest_Url
+     * Full URL address to send to api
+     *
+     * @var TextView textviewJSONText
+     * textView to show results received as api
+     */
+
     private boolean isSlideOpen = false;
     private Button btnMenu;
     private Button closetMenu;
@@ -104,6 +138,12 @@ public class weather_Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /**
+         * @brief Menu animation
+         * @detail If you click menu_button, the menu is visible or invisible
+         * @var boolean isSlide
+         * menu flag visible = true, invisible = false
+         */
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather);
 
@@ -249,6 +289,17 @@ public class weather_Activity extends AppCompatActivity {
         // GPS 정보를 보여주기 위한 이벤트 클래스 등록
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                /**
+                 * @brief
+                 * request permission and receive the curent position
+                 *
+                 * @detail
+                 * Press the refresh button to request permission or to receive the current position in gps.
+                 *
+                 * @var int cal_time
+                 * Changed to int for time comparison calculation
+                 */
+
                 // 권한 요청을 해야 함
                 if (!isPermission) {
                     callPermission();
@@ -391,7 +442,10 @@ public class weather_Activity extends AppCompatActivity {
 
     // GPS 권한 요청
     private void callPermission() {
-        // Check the SDK version and whether the permission is already granted or not.
+        /**
+         *  @brief Check the SDK version and whether the permission is already granted or not.
+         */
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -446,6 +500,15 @@ public class weather_Activity extends AppCompatActivity {
 
 
     private void getJSON(final String rest_Url) {
+        /**
+         * @brief
+         *  Receive the result through api.
+         *
+         * @detail
+         * Connect to the Internet, and you get a line of results.
+         * Afterwards, select the desired value from the data received and pass it over to textView to print it out.
+         */
+
 
         Thread thread = new Thread(new Runnable() {
 
@@ -583,6 +646,9 @@ public class weather_Activity extends AppCompatActivity {
 
     // convert from byte array to bitmap
     private static Bitmap getImage(byte[] image) {
+        /**
+         *   @brief convert from byte array to bitmap
+         */
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 

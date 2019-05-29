@@ -1,3 +1,10 @@
+/**
+ * @file coordinate_add_Activity.java
+ * @date 2019/05/06
+ * @author Anyeseu Oh / Team O-K
+ * @brief Weather page of our application
+ */
+
 package com.example.o_k;
 
 import android.content.Context;
@@ -51,6 +58,14 @@ public class coordinate_add_Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        /**
+         * @brief Menu animation
+         * @detail If you click menu_button, the menu is visible or invisible
+         * @var boolean isSlide
+         * menu flag visible = true, invisible = false
+         */
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.coordinate_add);
 
