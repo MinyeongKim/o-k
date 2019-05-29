@@ -135,6 +135,7 @@
                     android:textSize="18dp" />
 
                 <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/recommand_push"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="false" />
@@ -154,11 +155,12 @@
                     android:textColor="#ffffff"
                     android:textSize="18dp" />
 
-                <android.support.v7.widget.SwitchCompat
+                <Button
+                    android:id="@+id/clean_push"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:checked="true" />
+                     />
 
             </TableRow>
 
