@@ -90,6 +90,7 @@ public class weather_Activity extends AppCompatActivity {
     private Animation non_showMenu;
     private TextView txtLat;
     private TextView txtLon;
+    private ImageView weather_icon;
     private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
     private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
     private boolean isAccessFineLocation = false;
@@ -222,7 +223,7 @@ public class weather_Activity extends AppCompatActivity {
         //txtLat = (TextView) findViewById(R.id.tv_latitude);
         //txtLon = (TextView) findViewById(R.id.tv_longitude);
         textviewJSONText = findViewById(R.id.weatherBox);
-
+        weather_icon = findViewById(R.id.weather_icon);
 
         //Read Data
         dbHelper = new DBHelper(weather_Activity.this, "MyDB.db", null, 1);
@@ -482,18 +483,41 @@ public class weather_Activity extends AppCompatActivity {
         public void handleMessage(Message msg) {
 
             weather_Activity weather_Activity = weakReference.get();
+            String jsonString;
+
 
             if (weather_Activity != null) {
-                switch (msg.what) {
+                Log.i("df", String.valueOf(msg.what));
+                if (msg.what == 1) {
+                    weather_Activity.progressDialog.dismiss();
 
-                    case LOAD_SUCCESS:
-                        weather_Activity.progressDialog.dismiss();
+                    jsonString = (String) msg.obj;
 
-                        String jsonString = (String) msg.obj;
+                    weather_Activity.weather_icon.setImageResource(R.drawable.sunny);
+                    weather_Activity.textviewJSONText.setText(jsonString);
 
-                        weather_Activity.textviewJSONText.setText(jsonString);
-                        break;
                 }
+
+                if (msg.what == 3) {
+                    weather_Activity.progressDialog.dismiss();
+
+                    jsonString = (String) msg.obj;
+
+                    weather_Activity.weather_icon.setImageResource(R.drawable.cloud_sun);
+                    weather_Activity.textviewJSONText.setText(jsonString);
+
+                }
+
+                if (msg.what == 4) {
+                    weather_Activity.progressDialog.dismiss();
+
+                    jsonString = (String) msg.obj;
+
+                    weather_Activity.weather_icon.setImageResource(R.drawable.cloud);
+                    weather_Activity.textviewJSONText.setText(jsonString);
+
+                }
+
             }
         }
     }
@@ -515,6 +539,7 @@ public class weather_Activity extends AppCompatActivity {
             public void run() {
 
                 String result="";
+                int sky=0;
 
                 try {
                     Log.d(TAG, rest_Url);
@@ -570,6 +595,7 @@ public class weather_Activity extends AppCompatActivity {
                     // 필요한 데이터만 가져오려고합니다.
                     Log.i("Parse_item.length is ",Integer.toString(parse_item.length()));
                     for (int i = 0; i < parse_item.length(); i++) {
+
                         weather = (JSONObject) parse_item.get(i);
                         double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
                         category = (String) weather.get("category");
@@ -586,9 +612,18 @@ public class weather_Activity extends AppCompatActivity {
                         else if (category.equals("T3H")){
                             result += "기온: " + fcst_Value + "℃\n";
                         } else if (category.equals("SKY")){
-                            if (fcst_Value == 1) { result += "맑음\n";}
-                            else if (fcst_Value == 3) {result += "구름 많음\n";}
-                            else if (fcst_Value == 4) {result += "흐림\n";}
+                            if (fcst_Value == 1) {
+                                result += "맑음\n";
+                                sky = 1;
+                            }
+                            else if (fcst_Value == 3) {
+                                result += "구름 많음\n";
+                                sky=3;
+                            }
+                            else if (fcst_Value == 4) {
+                                result += "흐림\n";
+                                sky=4;
+                            }
                             else {
                                 result += "";
                             }
@@ -602,7 +637,7 @@ public class weather_Activity extends AppCompatActivity {
                 }
 
 
-                Message message = mHandler.obtainMessage(LOAD_SUCCESS, result);
+                Message message = mHandler.obtainMessage(sky, result);
                 mHandler.sendMessage(message);
             }
 
