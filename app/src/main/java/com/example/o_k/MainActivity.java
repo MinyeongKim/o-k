@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private Button btnMenu;
     private Button closetMenu;
     private Button weatherMenu;
-    private Button coordiMenu;
     private Button settingMenu;
     private LinearLayout slideMenu;
     private Animation showMenu;
@@ -86,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         //Activity 전환
         closetMenu = findViewById(R.id.closet_menu);
         weatherMenu = findViewById(R.id.weather_menu);
-        coordiMenu = findViewById(R.id.coordi_menu);
         settingMenu = findViewById(R.id.setting_menu);
 
         closetMenu.setOnClickListener(new View.OnClickListener() {
@@ -105,14 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-        coordiMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), coordinate_show_Activity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+
         settingMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

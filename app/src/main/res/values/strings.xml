@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">O-K</string>
+    <string name="notification_channel_id">"notification_channel_id"</string>
+    <string name="notification_channel_name">"notification_channel_name"</string>
 </resources>

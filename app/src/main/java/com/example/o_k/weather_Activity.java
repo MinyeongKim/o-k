@@ -83,13 +83,10 @@ public class weather_Activity extends AppCompatActivity {
     private Button btnMenu;
     private Button closetMenu;
     private Button weatherMenu;
-    private Button coordiMenu;
     private Button settingMenu;
     private LinearLayout slideMenu;
     private Animation showMenu;
     private Animation non_showMenu;
-    private TextView txtLat;
-    private TextView txtLon;
     private ImageView weather_icon;
     private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
     private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
@@ -97,27 +94,16 @@ public class weather_Activity extends AppCompatActivity {
     private boolean isAccessCoarseLocation = false;
     private boolean isPermission = false;
     private static final String TAG = "imagesearchexample";
-    private static final int LOAD_SUCCESS = 101;
 
     //API 사용
-    long mNow;
-    Date mDate;
-    Date mTime;
     private String base_date;
     private String base_time;
     private String lat;
     private String lon;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    SimpleDateFormat timeFormat = new SimpleDateFormat("hhmm");
-
-
-
     private final String data_url = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastSpaceData";
     private final String serviceKey = "?serviceKey=%2FYxsvH0O0av8Q7Fd7H7sW2yctGe4Oqfd4MWXhgUrqvlLAf%2FeKhdAaKinxbcKH1kcpebfDxp96jjuW4E8dSLdog%3D%3D";
     private String rest_Url;
-
-
 
     // GPSTracker class
     private GpsInfo gps;
@@ -177,7 +163,6 @@ public class weather_Activity extends AppCompatActivity {
         //Activity 전환
         closetMenu = findViewById(R.id.closet_menu);
         weatherMenu = findViewById(R.id.weather_menu);
-        coordiMenu = findViewById(R.id.coordi_menu);
         settingMenu = findViewById(R.id.setting_menu);
 
         closetMenu.setOnClickListener(new View.OnClickListener() {
@@ -192,14 +177,6 @@ public class weather_Activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), api.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-        coordiMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), coordinate_show_Activity.class);
                 startActivity(intent);
                 finish();
             }
@@ -220,8 +197,6 @@ public class weather_Activity extends AppCompatActivity {
          * */
 
         Button btnShowLocation = (Button) findViewById(R.id.refresh);
-        //txtLat = (TextView) findViewById(R.id.tv_latitude);
-        //txtLon = (TextView) findViewById(R.id.tv_longitude);
         textviewJSONText = findViewById(R.id.weatherBox);
         weather_icon = findViewById(R.id.weather_icon);
 
@@ -317,9 +292,6 @@ public class weather_Activity extends AppCompatActivity {
                     int i_lat = (int)latitude;
                     int i_lon = (int)longitude;
 
-                    //txtLat.setText(String.valueOf(latitude));
-                    //txtLon.setText(String.valueOf(longitude));
-
                     lat = Integer.toString(i_lat);
                     lon = Integer.toString(i_lon);
                     Log.i("This is lat " ,lat + "lon " +lon);
@@ -330,7 +302,7 @@ public class weather_Activity extends AppCompatActivity {
                     progressDialog.show();
 
                     Calendar cal = Calendar.getInstance();
-                    cal.add(Calendar.MINUTE, -45);
+                    //cal.add(Calendar.MINUTE, -45);
 
 
                     base_date = String.format("%d%02d%02d",cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1,cal.get(Calendar.DATE));
@@ -369,14 +341,14 @@ public class weather_Activity extends AppCompatActivity {
 
 
                     rest_Url = data_url + serviceKey + "&base_date="+ base_date + "&base_time=" + base_time + "&nx=" + lat + "&ny=" + lon +
-                            "&numOfRows=13" + "&pageNo=1" + "&_type=json";
+                            "&numOfRows=20" + "&pageNo=1" + "&_type=json";
                     //보낼 API주소 정해주기
 
                     getJSON(rest_Url);
 
                     Toast.makeText(
                             getApplicationContext(),
-                            "당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude + "\nAPI 사용 날짜 :" + base_date + "\nAPI 사용 시간 :" + base_time,
+                            "현재 위치 - \n위도: " + latitude + "\n경도: " + longitude + "\nAPI 사용 날짜 :" + base_date + "\nAPI 사용 시간 :" + base_time,
                             Toast.LENGTH_LONG).show();
 
 
@@ -498,7 +470,7 @@ public class weather_Activity extends AppCompatActivity {
 
                 }
 
-                if (msg.what == 3) {
+                if (msg.what == 3 || msg.what == 2) {
                     weather_Activity.progressDialog.dismiss();
 
                     jsonString = (String) msg.obj;
@@ -538,8 +510,8 @@ public class weather_Activity extends AppCompatActivity {
 
             public void run() {
 
-                String result="";
-                int sky=0;
+                String result = "";
+                int sky = 0;
 
                 try {
                     Log.d(TAG, rest_Url);
@@ -591,32 +563,43 @@ public class weather_Activity extends AppCompatActivity {
 
                     String category;
                     JSONObject weather;
+                    JSONObject weather_2;
                     // parse_item은 배열형태이기 때문에 하나씩 데이터를 하나씩 가져올때 사용합니다.
                     // 필요한 데이터만 가져오려고합니다.
                     Log.i("Parse_item.length is ",Integer.toString(parse_item.length()));
+
+
+                    weather_2 = (JSONObject) parse_item.get(0);
+                    String temp = (String) weather_2.get("fcstTime");
+
                     for (int i = 0; i < parse_item.length(); i++) {
 
                         weather = (JSONObject) parse_item.get(i);
+
                         double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                        String fcst_time = (String) weather.get("fcstTime");
                         category = (String) weather.get("category");
+                        Log.i("fcst_time is ", "" + fcst_time);
+                        Log.i("first fcst_time is ", "" + temp);
+
+                        if(!fcst_time.equals(temp)){
+                            break;
+                        }
+
                         // 출력합니다.
                         Log.i("category : ", category);
-                        Log.i(" fcst_Value : " , Double.toString(fcst_Value));
+                        Log.i("fcst_Value : " , Double.toString(fcst_Value));
 
                         bufferedReader.close();
                         httpURLConnection.disconnect();
 
-                        if(category.equals("POP")){
-                            result += "강수확률 " + fcst_Value + "%\n";
-                        }
-                        else if (category.equals("T3H")){
-                            result += "기온: " + fcst_Value + "℃\n";
-                        } else if (category.equals("SKY")){
+
+                        if (category.equals("SKY")){
                             if (fcst_Value == 1) {
                                 result += "맑음\n";
                                 sky = 1;
                             }
-                            else if (fcst_Value == 3) {
+                            else if (fcst_Value == 3 || fcst_Value == 2) {
                                 result += "구름 많음\n";
                                 sky=3;
                             }
@@ -627,7 +610,19 @@ public class weather_Activity extends AppCompatActivity {
                             else {
                                 result += "";
                             }
-                        } else {
+                        }
+
+
+                        else if (category.equals("T3H")){
+                            result += "기온: " + fcst_Value + "℃\n";
+                        }
+
+
+                        else if(category.equals("POP")){
+                            result += "강수확률 " + fcst_Value + "%\n";
+                        }
+
+                        else {
                             result += "";
                         }
 
@@ -636,7 +631,7 @@ public class weather_Activity extends AppCompatActivity {
                     result = e.toString();
                 }
 
-
+                Log.i("result is ", ""+result);
                 Message message = mHandler.obtainMessage(sky, result);
                 mHandler.sendMessage(message);
             }

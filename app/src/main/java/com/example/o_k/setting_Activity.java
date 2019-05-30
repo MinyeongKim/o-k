@@ -11,19 +11,25 @@ package com.example.o_k;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.example.o_k.service.JobSchedulerStart;
 
 public class setting_Activity extends AppCompatActivity {
     /**
@@ -38,15 +44,12 @@ public class setting_Activity extends AppCompatActivity {
     private Button btnMenu;
     private Button closetMenu;
     private Button weatherMenu;
-    private Button coordiMenu;
     private Button settingMenu;
     private LinearLayout slideMenu;
     private Animation showMenu;
     private Animation non_showMenu;
     private RadioGroup rg;
-
-    private NotificationManager notificationManager;
-    private PendingIntent intent ;
+    private SwitchCompat alarm;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -91,7 +94,6 @@ public class setting_Activity extends AppCompatActivity {
         //Activity 이동
         closetMenu = findViewById(R.id.closet_menu);
         weatherMenu = findViewById(R.id.weather_menu);
-        coordiMenu = findViewById(R.id.coordi_menu);
         settingMenu = findViewById(R.id.setting_menu);
 
         closetMenu.setOnClickListener(new View.OnClickListener() {
@@ -110,14 +112,6 @@ public class setting_Activity extends AppCompatActivity {
                 finish();
             }
         });
-        coordiMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), coordinate_show_Activity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
         settingMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,108 +121,46 @@ public class setting_Activity extends AppCompatActivity {
             }
         });
 
-        intent = PendingIntent.getActivity(this, 0,
-
-                new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
 
+        /**
+          여기에쓰세용
+         * **/
 
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.refresh) // 아이콘 설정하지 않으면 오류남
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setContentTitle("알림 제목") // 제목 설정
-                .setContentText("알림 내용") // 내용 설정
-                .setTicker("한줄 출력") // 상태바에 표시될 한줄 출력
-                .setAutoCancel(true)
-                .setContentIntent(intent);
+        alarm = (SwitchCompat)findViewById(R.id.clean_push);
+        final SharedPreferences sh_Pref = getSharedPreferences("Time", Context.MODE_PRIVATE);
+        if(sh_Pref != null && sh_Pref.getInt("state", 0) == 1) {
+            alarm.setChecked(true);
+        }
 
-
-
-        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0, builder.build());
-
-
-/**
- Button sw = (Button)findViewById(R.id.clean_push);
- //스위치의 체크 이벤트를 위한 리스너 등록
- sw.setOnClickListener(new View.OnClickListener() {
-@Override
-public void onClick(View v) {
-// TODO Auto-generated method stub
-//Toast.makeText(setting_Activity.this, "체크상태 = " + isChecked, Toast.LENGTH_SHORT).show();
-
-//if (isChecked == true) {
-intent = PendingIntent.getActivity(setting_Activity.this, 0,
-new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-Notification.Builder builder = new Notification.Builder(setting_Activity.this)
-.setSmallIcon(R.drawable.ic_launcher_background) // 아이콘 설정하지 않으면 오류남
-.setDefaults(Notification.DEFAULT_ALL)
-.setContentTitle("알림 제목") // 제목 설정
-.setContentText("알림 내용") // 내용 설정
-.setTicker("한줄 출력") // 상태바에 표시될 한줄 출력
-.setAutoCancel(true)
-.setContentIntent(intent);
-
-notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-notificationManager.notify(0, builder.build());
-Log.i("Is checked is true is ", "근데 왜 출력안돼 ㅡㅡ");
-}
-
-//  }
-
-});
-
- */
-
-
-
-        rg = (RadioGroup) findViewById(R.id.radGroupTheme);
-
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
-                /**
-                 * @brief onCheckedChanged() is changing the state of notification method
-                 * @detail
-                 * if checked ID is radBtnGreen -> change theme to Green
-                 * if checked ID is radBtnLightGreen -> change theme to Light Green
-                 * if checked ID is radBtnYellow -> change theme to Yellow
-                 * if checked ID is radBtnLightPink -> change theme to Light Pink
-                 * if checked ID is radBtnPink -> change theme to Pink
-                 */
-                switch (checkedId) {
-                    case R.id.radBtnGreen:
-                        Toast.makeText(getApplicationContext(), "현재 테마 : 초록색", Toast.LENGTH_SHORT).show();
-                        break;
-
-                    case R.id.radBtnLightGreen:
-                        Toast.makeText(getApplicationContext(), "현재 테마 : 옅은 초록색", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.radBtnYellow:
-                        Toast.makeText(getApplicationContext(), "현재 테마 : 노란색", Toast.LENGTH_SHORT).show();
-                        break;
-
-                    case R.id.radBtnLightPink:
-                        Toast.makeText(getApplicationContext(), "현재 테마 : 연한 분홍색", Toast.LENGTH_SHORT).show();
-                        break;
-
-                    case R.id.radBtnPink:
-                        Toast.makeText(getApplicationContext(), "현재 테마 : 분홍색", Toast.LENGTH_SHORT).show();
-                        break;
+        alarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            public void onCheckedChanged(CompoundButton button, boolean isChecked){
+                final SharedPreferences sh_Pref = getSharedPreferences("Time", Context.MODE_PRIVATE);
+                final SharedPreferences.Editor toEdit = sh_Pref.edit();
+                if (isChecked){ //Switch button ON
+                    Toast.makeText(getApplicationContext(), "알람 설정 켜짐", Toast.LENGTH_SHORT).show();
+                    toEdit.putInt("state", 1);
+                    if(sh_Pref.getInt("alert", 0) == 0){
+                        JobSchedulerStart.start(getApplicationContext());
+                    }
                 }
+                else { //Switch button OFF
+                    Toast.makeText(getApplicationContext(), "알람 설정 꺼짐", Toast.LENGTH_SHORT).show();
+                    toEdit.remove("state");
+                    if(sh_Pref.getInt("alert", 1) == 1){
+                        JobSchedulerStart.destroy();
+                    }
+                }
+                toEdit.apply();
             }
         });
 
 
 
-
-
-
     }
 
-    //Slide menu animation
+
+        //Slide menu animation
     private class SlidingPageAnimationListener implements Animation.AnimationListener{
         @Override
         public void onAnimationEnd(Animation animation){
