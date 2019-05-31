@@ -331,10 +331,13 @@ public class weather_Activity extends AppCompatActivity {
                         base_time= "1700";
                     } else if (cal_time < 2300 && cal_time >= 2000){
                         base_time= "2000";
-                    } else if (( cal_time >= 0 && cal_time < 200) || ( cal_time < 2359 && cal_time >= 2300)){
+                    } else if (cal_time < 2359 && cal_time >= 2300) {
+                        base_time= "2300";
+                    }
+                    else if ( cal_time >= 0 && cal_time < 200){
                         base_date = Integer.toString(yesterday);
                         base_time= "2300";
-                    }   else {
+                    } else {
                         Log.d("Base Time is","ERROR!");
                     }
 
@@ -570,8 +573,9 @@ public class weather_Activity extends AppCompatActivity {
 
 
                     weather_2 = (JSONObject) parse_item.get(0);
-                    String temp = (String) weather_2.get("fcstTime");
 
+                    String temp = (String) weather_2.get("fcstTime");
+                    Log.i("weather", "여기도 안돼나");
                     for (int i = 0; i < parse_item.length(); i++) {
 
                         weather = (JSONObject) parse_item.get(i);
