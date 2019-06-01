@@ -57,22 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
     //카테고리 별 이미지 저장소
     private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
-    private ArrayList<Integer> idxImages = new ArrayList<Integer>();
-    private ArrayList<Integer> idxClothes = new ArrayList<Integer>();
-    private ArrayList<String> classification = new ArrayList<String>();
     private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
+    private final ArrayList<String> thickClothes = new ArrayList<String>();
+    private final ArrayList<String> lengthClothes = new ArrayList<String>();
+    private final ArrayList<String> cateClothes = new ArrayList<String>();
 
-    private final ArrayList<Integer> cateTop = new ArrayList<Integer>();
-    private final ArrayList<Integer> cateBottom = new ArrayList<Integer>();
-    private final ArrayList<Integer> cateOuter = new ArrayList<Integer>();
-    private final ArrayList<Integer> cateEct = new ArrayList<Integer>();
-
-    /*
-    private final ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
-    private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
-    private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
-    private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
-    */
     //SQLite
     private DBHelper dbHelper;
 
@@ -190,36 +179,24 @@ public class MainActivity extends AppCompatActivity {
      * @brief Read data to database
      * @detail Categorize read data
      */
-    public void readData(){
+    private void readData(){
         dbHelper = new DBHelper(MainActivity.this, "MyDB.db", null, 1);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql = "SELECT * FROM closet";
         Cursor cursor = db.rawQuery(sql, null);
         byte[] blob;
-        int id;
-        String cate;
+        String cate, thick, length;
         Bitmap bitmap;
         while(cursor.moveToNext()){
-            id = cursor.getInt(0);
             cate = cursor.getString(1);
+            thick = cursor.getString(2);
+            length = cursor.getString(3);
             blob = cursor.getBlob(4);
             bitmap = getImage(blob);
-            idxClothes.add(id);
-            classification.add(cate);
             allClothe.add(bitmap);
-
-            if(cate.equals("상의")){
-                cateTop.add(id);
-            }
-            else if (cate.equals("하의")){
-                cateBottom.add(id);
-            }
-            else if(cate.equals("외투")){
-                cateOuter.add(id);
-            }
-            else if(cate.equals("기타")){
-                cateEct.add(id);
-            }
+            thickClothes.add(thick);
+            lengthClothes.add(length);
+            cateClothes.add(cate);
         }
 
         cursor.close();
@@ -229,61 +206,31 @@ public class MainActivity extends AppCompatActivity {
      * @brief Spinner
      * @datail Show images that fit the selected category
      */
-    public void spinner(){
-        category = findViewById(R.id.category_cloth);
+    private void spinner(){
+        category = (Spinner)findViewById(R.id.category_cloth);
         category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if((parent.getItemAtPosition(position)).equals("전체")){
-                    idxImages = idxClothes;
+                    getClassiLength("전체");
                 }
                 if((parent.getItemAtPosition(position)).equals("상의")){
-                    idxImages = cateTop;
+                    getClassiLength("상의");
                 }
                 if((parent.getItemAtPosition(position)).equals("하의")){
-                    idxImages = cateBottom;
+                    getClassiLength("하의");
                 }
                 if((parent.getItemAtPosition(position)).equals("외투")){
-                    idxImages = cateOuter;
+                    getClassiLength("외투");
                 }
                 if((parent.getItemAtPosition(position)).equals("기타")){
-                    idxImages = cateEct;
+                    getClassiLength("기타");
                 }
 
                 //Create GridView
                 grid = findViewById(R.id.gridView);
                 MyGridAdapter adapter = new MyGridAdapter(MainActivity.this);
                 grid.setAdapter(adapter);
-
-                grid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    int pos;
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        PopupMenu popup = new PopupMenu(MainActivity.this, view);
-
-                        MenuInflater inflater = popup.getMenuInflater();
-                        Menu menu = popup.getMenu();
-
-                        //byte[] temp = parent.getItemAtPosition(position);
-                        inflater.inflate(R.menu.image_reove_popupmenu, menu);
-                        pos = position;
-                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()){
-                                    case R.id.removeImage:
-                                        int temp = idxImages.get(pos) - 1;
-
-                                        return true;
-                                }
-                                return false;
-                            }
-                        });
-                        popup.show();
-                        return false;
-                    }
-                });
-
             }
 
             @Override
@@ -291,7 +238,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+
+    private void getClassiLength(String classi){
+        showImages.clear();
+        if(classi.equals("전체")) {
+            showImages.addAll(allClothe);
+        }else {
+            for(int i = 0; i < allClothe.size(); i++){
+                if((cateClothes.get(i)).equals(classi)){
+                    showImages.add(allClothe.get(i));
+                }
+            }
+        }
     }
 
     /**
@@ -307,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount(){
-            return idxImages.size();
+            return showImages.size();
         }
 
         @Override
@@ -317,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Object getItem(int position) {
-            return idxImages.get(position);
+            return showImages.get(position);
         }
 
         @Override
@@ -326,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
             imageView.setPadding(0,0,0,0);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-            imageView.setImageBitmap(allClothe.get(idxImages.get(position) - 1));
+            imageView.setImageBitmap(showImages.get(position));
 
             return imageView;
         }

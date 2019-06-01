@@ -116,10 +116,6 @@ public class weather_Activity extends AppCompatActivity {
     //카테고리 별 이미지 저장소
     private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
     private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
-    private final ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
-    private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
-    private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
-    private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
     private final ArrayList<String> thickClothes = new ArrayList<String>();
     private final ArrayList<String> lengthClothes = new ArrayList<String>();
     private final ArrayList<String> cateClothes = new ArrayList<String>();
@@ -729,18 +725,6 @@ public class weather_Activity extends AppCompatActivity {
             thickClothes.add(thick);
             lengthClothes.add(length);
             cateClothes.add(cate);
-            if(cate.equals("상의")){
-                cateTop.add(bitmap);
-            }
-            else if (cate.equals("하의")){
-                cateBottom.add(bitmap);
-            }
-            else if(cate.equals("외투")){
-                cateOuter.add(bitmap);
-            }
-            else {
-                cateEct.add(bitmap);
-            }
         }
 
         cursor.close();

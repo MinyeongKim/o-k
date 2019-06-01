@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path
-        name="hidden"
-        path="Android/data/com.ok.o_k/files/Pictures"/>
+    <external-path name="hidden" path="/Pictures/gyeom"/>
 </paths>

@@ -3,12 +3,17 @@ package com.ok.o_k;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Entity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -39,6 +44,7 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,8 +52,8 @@ import java.util.Date;
 import java.util.List;
 
 public class add_cloth_Activity extends AppCompatActivity {
-    private boolean isSlideOpen = false;
-    private Button btnMenu;
+    boolean isSlideOpen = false;
+    Button btnMenu;
     private Button closetMenu;
     private Button weatherMenu;
     private Button settingMenu;
@@ -61,25 +67,24 @@ public class add_cloth_Activity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CROP = 4444;
     private static final int REQUEST_CAMERA_CROP = 5555;
 
-    private ImageView img;
-    private Button btn_add_image;
+    ImageView img;
+    Button btn_add_image;
 
     private String mCurrentPhotoPath;
-    private Uri imageURI;
     private Uri photoURI;
     private Uri albumURI;
     private Uri cameraURI;
 
     //라디오 버튼
-    private RadioGroup classiRad;
-    private RadioGroup thickRad;
-    private RadioGroup lengthRad;
+    RadioGroup classiRad;
+    RadioGroup thickRad;
+    RadioGroup lengthRad;
 
     //옷 추가 버튼
-    private Button btnAdd;
+    Button btnAdd;
 
     //SQLite
-    private DBHelper dbHelper;
+    private DBHelper dbHelper = new DBHelper(add_cloth_Activity.this, "MyDB.db", null, 1);
 
     //Permission
     private boolean isAccessCamera = false;
@@ -101,8 +106,6 @@ public class add_cloth_Activity extends AppCompatActivity {
             callPermission();
             return;
         }
-
-
         img = findViewById(R.id.image_view);
         btn_add_image = findViewById(R.id.btn_add_image);
 
@@ -165,7 +168,7 @@ public class add_cloth_Activity extends AppCompatActivity {
 
         //최종 추가버튼
         btnAdd = findViewById(R.id.add_clothe);
-        dbHelper = new DBHelper(add_cloth_Activity.this, "MyDB.db", null, 1);
+
 
         callPermission();
     }
@@ -229,180 +232,6 @@ public class add_cloth_Activity extends AppCompatActivity {
         });
         popup.show();
     }
-
-    //사진 가져오기
-
-    /**
-     * @brief Take a picture
-     * @detail Take a picture using camera app and start onActivityResult()
-     * @var Intent takePictureIntent
-     * intent variance using camera app
-     */
-    private void captureCamera(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takePictureIntent.resolveActivity(getPackageManager()) != null){
-            File photoFile = null;
-            try{
-                photoFile = createImageFile();
-            }catch (IOException ex){
-                //Error occurred while creating the File
-            }
-
-            if(photoFile != null){
-                Uri providerURI = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-                imageURI = providerURI;
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-
-    /**
-     * @brief Create Image File to store image
-     * @detail Set file name and path to store the picture file.
-     * @var File image
-     * Variance to store image file
-     * @var String mCurrentPhotoPath
-     *  File's path variance to store image
-     * @return image
-     * @throws IOException
-     */
-    private File createImageFile() throws  IOException{
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = timeStamp + ".jpg";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    /**
-     * @brief Get image to gallery
-     * @detail Get image and start onActivityResult()
-     */
-    private void getAlbum(){
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-        startActivityForResult(intent, REQUEST_TAKE_ALBUM);
-    }
-
-    /**
-     * @brief Store image file
-     * @detail Save the image file using the path saved in mCurrentPhotoPath
-     * @var String mCurrentPhotoPath
-     * File's path variance to store image
-     */
-    private void galleryAddPic(){
-        Log.i("galleryAddPic", "Call");
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        sendBroadcast(mediaScanIntent);
-    }
-
-
-    /**
-     * @brief Crop image that got from the gallery
-     * @detail Obtain the permission and crop image
-     */
-    private void cropImage(){
-        Intent cropIntent = new Intent("com.android.camera.action.CROP");
-
-        cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        cropIntent.setDataAndType(photoURI, "image/*");
-
-        cropIntent.putExtra("outputX", 350);
-        cropIntent.putExtra("outputY", 350);
-        cropIntent.putExtra("aspectX", 1);
-        cropIntent.putExtra("aspectY", 1);
-        cropIntent.putExtra("scale", true);
-        cropIntent.putExtra("output", albumURI);
-        startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
-    }
-
-    /**
-     * @brief Crop image that toke a picture
-     * @detail Obtain the permission and crop image
-     */
-    private void cropCamera(){
-        Intent cropIntent = new Intent("com.android.camera.action.CROP");
-
-        cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        cropIntent.setDataAndType(imageURI, "image/*");
-
-        cropIntent.putExtra("aspectX", 1);
-        cropIntent.putExtra("aspectY", 1);
-        cropIntent.putExtra("scale", true);
-        cropIntent.putExtra("output", cameraURI);
-        startActivityForResult(cropIntent, REQUEST_CAMERA_CROP);
-    }
-
-    /**
-     * @brief To use the results from startActivityForResult
-     * @param requestCode
-     * second argument value of startActivityForResult()
-     * @param resultCode
-     * success or failure value set in recalled activity
-     * @param data
-     * Results saved from invoked activity
-     *
-     *
-     */
-    @Override
-    protected  void onActivityResult(int requestCode, int resultCode, Intent data){
-        switch (requestCode){
-            case REQUEST_TAKE_PHOTO:
-                if(resultCode == RESULT_OK){
-                    try{
-                        File cameraFile = null;
-                        cameraFile = createImageFile();
-                        cameraURI = Uri.fromFile(cameraFile);
-                        cropCamera();
-                        img.setImageURI(imageURI);
-                    }catch (Exception ignored){  }
-                } else{
-                    Toast.makeText(add_cloth_Activity.this, "사진찍기를 취소하였습니다", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            case REQUEST_TAKE_ALBUM:
-                if(resultCode == RESULT_OK){
-                    if(data.getData() != null){
-                        try{
-                            File albumFile = null;
-                            albumFile = createImageFile();
-                            photoURI = data.getData();
-                            albumURI = Uri.fromFile(albumFile);
-                            cropImage();
-                        } catch (Exception e){
-                            Log.e("TAKE_ALBUM_SINGLE Error", e.toString());
-                        }
-                    }
-                }
-                break;
-
-            case REQUEST_IMAGE_CROP:
-                if(resultCode == Activity.RESULT_OK){
-                    galleryAddPic();
-                    img.setImageURI(albumURI);
-                }
-                break;
-
-            case REQUEST_CAMERA_CROP:
-                if(resultCode == Activity.RESULT_OK){
-                    galleryAddPic();
-                    img.setImageURI(cameraURI);
-                }
-                break;
-        }
-    }
-
-    //추가하기 버튼
-
     /**
      * @brief Store result to database
      * @detail Store the selected radio button values for each category and images in the database
@@ -445,8 +274,195 @@ public class add_cloth_Activity extends AppCompatActivity {
         finish();
     }
 
-    //Bitmap chage
-    // convert from bitmap to byte array
+    //사진 가져오기
+
+    /**
+     * @brief Take a picture
+     * @detail Take a picture using camera app and start onActivityResult()
+     * @var Intent takePictureIntent
+     * intent variance using camera app
+     */
+    private void captureCamera(){
+        String state = Environment.getExternalStorageState();
+        if(Environment.MEDIA_MOUNTED.equals(state)){
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if(takePictureIntent.resolveActivity(getPackageManager()) != null){
+                File photoFile = null;
+                try{
+                    photoFile = createImageFile();
+                }catch (IOException ex){
+                    Log.e("capture Camera Error", ex.toString());
+                }
+                Uri provider = FileProvider.getUriForFile(add_cloth_Activity.this, "com.ok.o_k", photoFile);
+                photoURI = provider;
+                Log.i("photoURI", photoURI.toString());
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, provider);
+
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }else{
+            Log.i("알림", "저장공간에 접근 불가능");
+            return;
+        }
+    }
+
+    /**
+     * @brief Create Image File to store image
+     * @detail Set file name and path to store the picture file.
+     * @var File image
+     * Variance to store image file
+     * @var String mCurrentPhotoPath
+     *  File's path variance to store image
+     * @return image
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException{
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = timeStamp+".jpg";
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "gyeom");
+        File image = new File(storageDir, imageFileName);
+        mCurrentPhotoPath = image.getAbsolutePath();
+        Log.i("check", mCurrentPhotoPath);
+        return image;
+    }
+
+    /**
+     * @brief Get image to gallery
+     * @detail Get image and start onActivityResult()
+     */
+    private void getAlbum(){
+        Log.i("getAlbum", "call");
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+        startActivityForResult(intent, REQUEST_TAKE_ALBUM);
+    }
+
+    /**
+     * @brief Store image file
+     * @detail Save the image file using the path saved in mCurrentPhotoPath
+     * @var String mCurrentPhotoPath
+     * File's path variance to store image
+     */
+    private void galleryAddPic(){
+        Log.i("galleryAddPic", "Call");
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+    }
+
+
+    /**
+     * @brief Crop image that got from the gallery
+     * @detail Obtain the permission and crop image
+     */
+    private void cropImage(){
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+
+        cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        cropIntent.setDataAndType(photoURI, "image/*");
+
+        cropIntent.putExtra("outputX", 350);
+        cropIntent.putExtra("outputY", 350);
+        cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);
+        cropIntent.putExtra("scale", true);
+        cropIntent.putExtra("output", albumURI);
+        Log.i("albumURI", albumURI.toString());
+        startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
+    }
+
+    /**
+     * @brief Crop image that toke a picture
+     * @detail Obtain the permission and crop image
+     */
+    private void cropCamera(){
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+
+        cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        cropIntent.setDataAndType(photoURI, "image/*");
+
+        cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);
+        cropIntent.putExtra("scale", true);
+        cropIntent.putExtra("output", cameraURI);
+        startActivityForResult(cropIntent, REQUEST_CAMERA_CROP);
+    }
+
+    /**
+     * @brief To use the results from startActivityForResult
+     * @param requestCode
+     * second argument value of startActivityForResult()
+     * @param resultCode
+     * success or failure value set in recalled activity
+     * @param data
+     * Results saved from invoked activity
+     *
+     *
+     */
+    @Override
+    protected  void onActivityResult(int requestCode, int resultCode, Intent data){
+        img = findViewById(R.id.image_view);
+        switch (requestCode){
+            case REQUEST_TAKE_PHOTO:
+                if(resultCode == RESULT_OK){
+                    try{
+                        File cameraFile = null;
+                        cameraFile = createImageFile();
+                        cameraURI = Uri.fromFile(cameraFile);
+                        cropCamera();
+                    }catch (Exception ignored){  }
+                } else{
+                    Toast.makeText(add_cloth_Activity.this, "사진찍기를 취소하였습니다", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case REQUEST_TAKE_ALBUM:
+                if(resultCode == RESULT_OK){
+                    if(data.getData() != null){
+                        try{
+                            File albumFile = null;
+                            albumFile = createImageFile();
+                            photoURI = data.getData();
+                            albumURI = Uri.fromFile(albumFile);
+                            cropImage();
+                        } catch (Exception e){
+                            Log.e("TAKE_ALBUM_SINGLE Error", e.toString());
+                        }
+                    }
+                }
+                break;
+
+            case REQUEST_IMAGE_CROP:
+                if(resultCode == Activity.RESULT_OK){
+                    galleryAddPic();
+                    try{
+                        Log.i("check", albumURI.toString());
+                        img.setImageURI(albumURI);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                break;
+
+            case REQUEST_CAMERA_CROP:
+                if(resultCode == Activity.RESULT_OK){
+                    galleryAddPic();
+                    try{
+                        Log.i("check", cameraURI.toString());
+                        img.setImageURI(cameraURI);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                break;
+        }
+    }
+
 
     /**
      * @brief Chage bitmap
@@ -460,21 +476,6 @@ public class add_cloth_Activity extends AppCompatActivity {
         return stream.toByteArray();
     }
 
-    private void requirePermission() {
-        String[] permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
-        List<String> listPermissionNeeded = new ArrayList<>();
-
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(add_cloth_Activity.this, permission) == PackageManager.PERMISSION_DENIED) {
-                listPermissionNeeded.add(permission);
-            }
-        }
-
-        if (!listPermissionNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(add_cloth_Activity.this, listPermissionNeeded.toArray(new String[listPermissionNeeded.size()]), 1);
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -521,4 +522,3 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 }
-
