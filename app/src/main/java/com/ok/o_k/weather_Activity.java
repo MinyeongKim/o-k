@@ -549,34 +549,37 @@ public class weather_Activity extends AppCompatActivity {
 
                         if (category.equals("SKY")){
                             if (fcst_Value == 1) {
-                                result += "맑음\n";
+                                result  = result + "맑음\n";
                                 sky = 1;
                             }
                             else if (fcst_Value == 3 || fcst_Value == 2) {
-                                result += "구름 많음\n";
+                                result  = result + "구름 많음\n";
                                 sky=3;
                             }
                             else if (fcst_Value == 4) {
-                                result += "흐림\n";
+                                result  = result + "흐림\n";
                                 sky=4;
                             }
                             else {
-                                result += "";
+                                result  = result +"";
                             }
                         }
 
 
                         else if (category.equals("T3H")){
-                            result += "기온: " + fcst_Value + "℃\n";
+                            result  = result + "기온: " + Double.toString(fcst_Value) + "℃\n";
+                            Log.i("weather temperature", "Check for error\n"+result);
+                            break;
                         }
 
 
                         else if(category.equals("POP")){
-                            result += "강수확률 " + fcst_Value + "%\n";
+                            result = result + ("강수확률 " + Double.toString(fcst_Value) + "%\n");
+                            Log.i("weather rain", "Check for error\n"+result);
                         }
 
                         else {
-                            result += "";
+                            result  = result + "";
                         }
 
                     }
