@@ -1,11 +1,19 @@
 package com.ok.o_k;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -61,11 +69,21 @@ public class MainActivity extends AppCompatActivity {
     */
     //SQLite
     private DBHelper dbHelper;
+    int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //권한 요청
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)){
+            }else{
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
+            }
+        }
 
         //Show Slide Menu
         slideMenu = findViewById(R.id.slideMenu);
@@ -329,5 +347,17 @@ public class MainActivity extends AppCompatActivity {
      */
     private static Bitmap getImage(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
+    public void onRequestPermissionResult(int requestCode, String pemisstions[], int[] grantResults){
+        switch (requestCode){
+            case MY_PERMISSIONS_REQUEST_CAMERA:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "승인이 허가되어 있습니다.", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(this, "아직 승인받지 않았습니다.", Toast.LENGTH_LONG).show();
+                }
+                return;
+        }
     }
 }
