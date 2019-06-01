@@ -19,6 +19,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -34,16 +36,29 @@ public class MainActivity extends AppCompatActivity {
     private Animation showMenu;
     private Animation non_showMenu;
     private Spinner category;
+    private ImageView img;
     String cate;
     private GridView grid;
 
+
     //카테고리 별 이미지 저장소
     private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
+    private ArrayList<Integer> idxImages = new ArrayList<Integer>();
+    private ArrayList<Integer> idxClothes = new ArrayList<Integer>();
+    private ArrayList<String> classification = new ArrayList<String>();
     private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
+
+    private final ArrayList<Integer> cateTop = new ArrayList<Integer>();
+    private final ArrayList<Integer> cateBottom = new ArrayList<Integer>();
+    private final ArrayList<Integer> cateOuter = new ArrayList<Integer>();
+    private final ArrayList<Integer> cateEct = new ArrayList<Integer>();
+
+    /*
     private final ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
     private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
     private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
     private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
+    */
     //SQLite
     private DBHelper dbHelper;
 
@@ -167,24 +182,29 @@ public class MainActivity extends AppCompatActivity {
         String sql = "SELECT * FROM closet";
         Cursor cursor = db.rawQuery(sql, null);
         byte[] blob;
+        int id;
         String cate;
         Bitmap bitmap;
         while(cursor.moveToNext()){
+            id = cursor.getInt(0);
             cate = cursor.getString(1);
             blob = cursor.getBlob(4);
             bitmap = getImage(blob);
+            idxClothes.add(id);
+            classification.add(cate);
             allClothe.add(bitmap);
+
             if(cate.equals("상의")){
-                cateTop.add(bitmap);
+                cateTop.add(id);
             }
             else if (cate.equals("하의")){
-                cateBottom.add(bitmap);
+                cateBottom.add(id);
             }
             else if(cate.equals("외투")){
-                cateOuter.add(bitmap);
+                cateOuter.add(id);
             }
             else if(cate.equals("기타")){
-                cateEct.add(bitmap);
+                cateEct.add(id);
             }
         }
 
@@ -201,25 +221,54 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if((parent.getItemAtPosition(position)).equals("전체")){
-                    showImages = allClothe;
+                    idxImages = idxClothes;
                 }
                 if((parent.getItemAtPosition(position)).equals("상의")){
-                    showImages = cateTop;
+                    idxImages = cateTop;
                 }
                 if((parent.getItemAtPosition(position)).equals("하의")){
-                    showImages = cateBottom;
+                    idxImages = cateBottom;
                 }
                 if((parent.getItemAtPosition(position)).equals("외투")){
-                    showImages = cateOuter;
+                    idxImages = cateOuter;
                 }
                 if((parent.getItemAtPosition(position)).equals("기타")){
-                    showImages = cateEct;
+                    idxImages = cateEct;
                 }
 
                 //Create GridView
                 grid = findViewById(R.id.gridView);
                 MyGridAdapter adapter = new MyGridAdapter(MainActivity.this);
                 grid.setAdapter(adapter);
+
+                grid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    int pos;
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                        PopupMenu popup = new PopupMenu(MainActivity.this, view);
+
+                        MenuInflater inflater = popup.getMenuInflater();
+                        Menu menu = popup.getMenu();
+
+                        //byte[] temp = parent.getItemAtPosition(position);
+                        inflater.inflate(R.menu.image_reove_popupmenu, menu);
+                        pos = position;
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()){
+                                    case R.id.removeImage:
+                                        int temp = idxImages.get(pos) - 1;
+
+                                        return true;
+                                }
+                                return false;
+                            }
+                        });
+                        popup.show();
+                        return false;
+                    }
+                });
 
             }
 
@@ -244,26 +293,26 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount(){
-            return showImages.size();
+            return idxImages.size();
         }
 
         @Override
-        public long getItemId(int index){
-            return showImages.indexOf(index);
+        public long getItemId(int position){
+            return position;
         }
 
         @Override
-        public Object getItem(int index){
-            return showImages.indexOf(index);
+        public Object getItem(int position) {
+            return idxImages.get(position);
         }
 
         @Override
-        public View getView(int index, View arg1, ViewGroup arg2){
+        public View getView(int position, View arg1, ViewGroup arg2){
             ImageView imageView = new ImageView(context);
             imageView.setPadding(0,0,0,0);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-            imageView.setImageBitmap(showImages.get(index));
+            imageView.setImageBitmap(allClothe.get(idxImages.get(position) - 1));
 
             return imageView;
         }

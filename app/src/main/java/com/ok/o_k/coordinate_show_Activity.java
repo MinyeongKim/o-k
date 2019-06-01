@@ -67,7 +67,7 @@ public class coordinate_show_Activity extends AppCompatActivity {
         weatherMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), api.class);
+                Intent intent = new Intent(getApplicationContext(), weather_Activity.class);
                 startActivity(intent);
                 finish();
             }
