@@ -252,7 +252,7 @@ public class weather_Activity extends AppCompatActivity {
                     progressDialog.show();
 
                     Calendar cal = Calendar.getInstance();
-                    //cal.add(Calendar.MINUTE, -45);
+                    //cal.add(Calendar.MINUTE, -240);
 
 
                     base_date = String.format("%d%02d%02d",cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1,cal.get(Calendar.DATE));
@@ -412,7 +412,7 @@ public class weather_Activity extends AppCompatActivity {
 
 
             if (weather_Activity != null) {
-                Log.i("df", String.valueOf(msg.what));
+                Log.i("SKY Value is ", String.valueOf(msg.what));
                 if (msg.what == 1) {
                     weather_Activity.progressDialog.dismiss();
 
@@ -464,8 +464,8 @@ public class weather_Activity extends AppCompatActivity {
             public void run() {
 
                 String result = "";
-                int sky = 0;
-                double temp;
+                int sky = 1;
+
                 try {
                     Log.d(TAG, rest_Url);
                     URL url = new URL(rest_Url);
@@ -516,28 +516,43 @@ public class weather_Activity extends AppCompatActivity {
 
                     String category;
                     JSONObject weather;
-                    JSONObject weather_2;
+                    JSONObject weather_2 = (JSONObject) parse_item.get(0);
                     // parse_item은 배열형태이기 때문에 하나씩 데이터를 하나씩 가져올때 사용합니다.
                     // 필요한 데이터만 가져오려고합니다.
                     Log.i("Parse_item.length is ",Integer.toString(parse_item.length()));
 
 
-                    weather_2 = (JSONObject) parse_item.get(0);
+
                     Log.i("weather1", "Check for error");
-                    temp = ((Number) weather_2.get("fcstTime")).doubleValue();
-                    Log.i("weather2", "Check for error");
+
+                    String temp = (String) weather_2.get("fcstTime");
+                    //double temp = ((Number) weather_2.get("fcstTime")).doubleValue();
+                    Log.i("weather2", "Check for error"+temp);
+
+                    double fcst_Value;
+                    String fcst_time; //Time 자체를 "" 상태로 받아오기 때문에 String 선언이 필요함.
 
                     for (int i = 0; i < parse_item.length(); i++) {
 
                         weather = (JSONObject) parse_item.get(i);
+                        Log.i("weather", ""+weather);
 
-                        double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
-                        double fcst_time = ((Number) weather.get("fcstTime")).doubleValue();
+                        fcst_time = (String) weather.get("fcstTime");
+                        //double fcst_time = ((Number) weather.get("fcstTime")).doubleValue();
+                        Log.i("weather 3", "Check for error");
+
+
+                        fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                        //double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                        Log.i("weather 4", "Check for error");
+
+
+
                         category = (String) weather.get("category");
                         Log.i("fcst_time is ", "" + fcst_time);
                         Log.i("first fcst_time is ", "" + temp);
 
-                        if(fcst_time != temp){
+                        if(!fcst_time.equals(temp)){
                             break;
                         }
 
@@ -551,37 +566,37 @@ public class weather_Activity extends AppCompatActivity {
 
                         if (category.equals("SKY")){
                             if (fcst_Value == 1) {
-                                result  = result + "맑음\n";
+                                result  += "맑음\n";
                                 sky = 1;
                             }
                             else if (fcst_Value == 3 || fcst_Value == 2) {
-                                result  = result + "구름 많음\n";
+                                result  += "구름 많음\n";
                                 sky=3;
                             }
                             else if (fcst_Value == 4) {
-                                result  = result + "흐림\n";
+                                result += "흐림\n";
                                 sky=4;
                             }
                             else {
-                                result  = result +"";
+                                result += "";
                             }
                         }
 
 
                         else if (category.equals("T3H")){
-                            result  = result + "기온: " + Double.toString(fcst_Value) + "℃\n";
+                            result += "기온: " + fcst_Value + "℃\n";
                             Log.i("weather temperature", "Check for error\n"+result);
                             break;
                         }
 
 
                         else if(category.equals("POP")){
-                            result = result + ("강수확률 " + Double.toString(fcst_Value) + "%\n");
+                            result += ("강수확률 " + fcst_Value + "%\n");
                             Log.i("weather rain", "Check for error\n"+result);
                         }
 
                         else {
-                            result  = result + "";
+                            result += "";
                         }
 
                     }
@@ -589,7 +604,7 @@ public class weather_Activity extends AppCompatActivity {
                     result = e.toString();
                 }
 
-                Log.i("result is ", ""+result);
+                Log.i("result is ", result);
                 Message message = mHandler.obtainMessage(sky, result);
                 mHandler.sendMessage(message);
             }
