@@ -1,4 +1,4 @@
-package com.example.o_k.service;
+package com.ok.o_k.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
-import com.example.o_k.R;
+import com.ok.o_k.R;
 
 public class AlarmBroadcastReceiver extends BroadcastReceiver {
     private final static int NOTICATION_ID = 222;

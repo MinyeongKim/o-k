@@ -5,7 +5,7 @@
  * @brief Weather page of our application
  */
 
-package com.example.o_k;
+package com.ok.o_k;
 
 import android.content.Context;
 import android.content.Intent;

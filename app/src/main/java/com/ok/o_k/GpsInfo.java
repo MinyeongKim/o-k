@@ -6,7 +6,7 @@
  */
 
 
-package com.example.o_k;
+package com.ok.o_k;
 
 
 import android.annotation.TargetApi;

@@ -1,4 +1,4 @@
-package com.example.o_k;
+package com.ok.o_k;
 
 import android.content.Intent;
 import android.os.Bundle;

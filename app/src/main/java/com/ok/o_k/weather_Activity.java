@@ -6,7 +6,7 @@
  */
 
 
-package com.example.o_k;
+package com.ok.o_k;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -47,10 +47,8 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class weather_Activity extends AppCompatActivity {
     /**

@@ -173,7 +173,17 @@
             android:layout_marginRight="30dp"
             android:layout_marginBottom="30dp"
             android:padding="20dp"
-            android:text="참조는 여기저기 여기저기\n 여기 저기~~"/>
+            android:text=" ★사용 글씨체 : a이끌림B.ttf\n
+비상업적 용도에 한하여 무료 사용\n
+http://www.asiafont.com/asfont/am_solution.php\n
+            \n ★사용한 Icon : https://www.flaticon.com\n
+저작권 © 2013-2019 Freepik Company SL 모든 권리는 저작권자의 소유입니다.\n
+
+\n★ 참고 블로그 :  https://webnautes.tistory.com/462\n
+\nhttps://kingpodo.tistory.com/16\n
+\nhttps://namget.tistory.com/entry/
+
+"/>
 
 
 

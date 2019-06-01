@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.o_k">
+    package="com.ok.o_k">
 
     <application
-        android:name=".MyApplication"
+        android:name="com.ok.o_k.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/main_logo"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".SplashActivity"
+            android:name="com.ok.o_k.SplashActivity"
             android:theme="@style/SplashTheme"
             android:screenOrientation="portrait">
 
@@ -24,17 +24,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".add_cloth_Activity"></activity>
-        <activity android:name=".coordinate_show_Activity"></activity>
-        <activity android:name=".coordinate_add_Activity"></activity>
-        <activity android:name=".setting_Activity"></activity>
-        <activity android:name=".weather_Activity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.ok.o_k.add_cloth_Activity"></activity>
+        <activity android:name="com.ok.o_k.coordinate_show_Activity"></activity>
+        <activity android:name="com.ok.o_k.coordinate_add_Activity"></activity>
+        <activity android:name="com.ok.o_k.setting_Activity"></activity>
+        <activity android:name="com.ok.o_k.weather_Activity"></activity>
+        <activity android:name="com.ok.o_k.MainActivity">
 
         </activity>
 
         <service
-            android:name=".service.NotificationJobFireBaseService"
+            android:name="com.ok.o_k.service.NotificationJobFireBaseService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -43,12 +43,12 @@
         </service>
 
         <receiver
-            android:name=".service.AlarmBroadcastReceiver"
+            android:name="com.ok.o_k.service.AlarmBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <provider
-            android:authorities="com.example.o_k"
+            android:authorities="com.ok.o_k"
             android:name="android.support.v4.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
