@@ -120,6 +120,12 @@ public class weather_Activity extends AppCompatActivity {
     private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
     private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
     private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
+    private final ArrayList<String> thickClothes = new ArrayList<String>();
+    private final ArrayList<String> lengthClothes = new ArrayList<String>();
+    private final ArrayList<String> cateClothes = new ArrayList<String>();
+
+    private double currentTemp;
+
     //SQLite
     private DBHelper dbHelper;
 
@@ -201,66 +207,10 @@ public class weather_Activity extends AppCompatActivity {
         weather_icon = findViewById(R.id.weather_icon);
 
         //Read Data
-        dbHelper = new DBHelper(weather_Activity.this, "MyDB.db", null, 1);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sql = "SELECT * FROM closet";
-        Cursor cursor = db.rawQuery(sql, null);
-        byte[] blob;
-        String cate;
-        Bitmap bitmap;
-        while(cursor.moveToNext()){
-            cate = cursor.getString(1);
-            blob = cursor.getBlob(4);
-            bitmap = getImage(blob);
-            allClothe.add(bitmap);
-            if(cate.equals("상의")){
-                cateTop.add(bitmap);
-            }
-            else if (cate.equals("하의")){
-                cateBottom.add(bitmap);
-            }
-            else if(cate.equals("외투")){
-                cateOuter.add(bitmap);
-            }
-            else {
-                cateEct.add(bitmap);
-            }
-        }
+       readData();
 
-        cursor.close();
-
-        //Spinner
-        category = (Spinner)findViewById(R.id.category_cloth);
-        category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if((parent.getItemAtPosition(position)).equals("전체")){
-                    showImages = allClothe;
-                }
-                if((parent.getItemAtPosition(position)).equals("상의")){
-                    showImages = cateTop;
-                }
-                if((parent.getItemAtPosition(position)).equals("하의")){
-                    showImages = cateBottom;
-                }
-                if((parent.getItemAtPosition(position)).equals("외투")){
-                    showImages = cateOuter;
-                }
-                if((parent.getItemAtPosition(position)).equals("기타")){
-                    showImages = cateEct;
-                }
-
-                //Create GridView
-                grid = findViewById(R.id.gridView);
-                weather_Activity.MyGridAdapter adapter = new weather_Activity.MyGridAdapter(weather_Activity.this);
-                grid.setAdapter(adapter);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+       //Spinner
+        spinner();
 
         // GPS 정보를 보여주기 위한 이벤트 클래스 등록
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
@@ -515,7 +465,7 @@ public class weather_Activity extends AppCompatActivity {
 
                 String result = "";
                 int sky = 0;
-
+                double temp;
                 try {
                     Log.d(TAG, rest_Url);
                     URL url = new URL(rest_Url);
@@ -573,20 +523,21 @@ public class weather_Activity extends AppCompatActivity {
 
 
                     weather_2 = (JSONObject) parse_item.get(0);
+                    Log.i("weather1", "Check for error");
+                    temp = ((Number) weather_2.get("fcstTime")).doubleValue();
+                    Log.i("weather2", "Check for error");
 
-                    String temp = (String) weather_2.get("fcstTime");
-                    Log.i("weather", "여기도 안돼나");
                     for (int i = 0; i < parse_item.length(); i++) {
 
                         weather = (JSONObject) parse_item.get(i);
 
                         double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
-                        String fcst_time = (String) weather.get("fcstTime");
+                        double fcst_time = ((Number) weather.get("fcstTime")).doubleValue();
                         category = (String) weather.get("category");
                         Log.i("fcst_time is ", "" + fcst_time);
                         Log.i("first fcst_time is ", "" + temp);
 
-                        if(!fcst_time.equals(temp)){
+                        if(fcst_time != temp){
                             break;
                         }
 
@@ -684,6 +635,193 @@ public class weather_Activity extends AppCompatActivity {
          *   @brief convert from byte array to bitmap
          */
         return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
+
+    private void spinner(){
+        category = (Spinner)findViewById(R.id.category_cloth);
+        category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if((parent.getItemAtPosition(position)).equals("전체")){
+                    getClassiLength("전체");
+                }
+                if((parent.getItemAtPosition(position)).equals("상의")){
+                    getClassiLength("상의");
+                }
+                if((parent.getItemAtPosition(position)).equals("하의")){
+                    getClassiLength("하의");
+                }
+                if((parent.getItemAtPosition(position)).equals("외투")){
+                    getClassiLength("외투");
+                }
+                if((parent.getItemAtPosition(position)).equals("기타")){
+                    getClassiLength("기타");
+                }
+
+                //Create GridView
+                grid = findViewById(R.id.gridView);
+                weather_Activity.MyGridAdapter adapter = new weather_Activity.MyGridAdapter(weather_Activity.this);
+                grid.setAdapter(adapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private String checkTemperature(Double temp){
+        String checkTemp = "";
+        if(temp >= 27){
+            checkTemp = "veryHot";
+        }else if(temp<27 && temp >=22){
+            checkTemp = "hot";
+        }else if(temp<22 && temp >=19){
+            checkTemp = "littleHot";
+        }else if(temp<19 && temp >=16){
+            checkTemp = "mild";
+        }else if(temp<16 && temp >=9){
+            checkTemp = "littleCold";
+        }else if(temp<9 && temp >=5){
+            checkTemp = "cold";
+        }else{
+            checkTemp = "veryCold";
+        }
+
+        return checkTemp;
+    }
+
+    private void readData(){
+        dbHelper = new DBHelper(weather_Activity.this, "MyDB.db", null, 1);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String sql = "SELECT * FROM closet";
+        Cursor cursor = db.rawQuery(sql, null);
+        byte[] blob;
+        String cate, thick, length;
+        Bitmap bitmap;
+        while(cursor.moveToNext()){
+            cate = cursor.getString(1);
+            thick = cursor.getString(2);
+            length = cursor.getString(3);
+            blob = cursor.getBlob(4);
+            bitmap = getImage(blob);
+            allClothe.add(bitmap);
+            thickClothes.add(thick);
+            lengthClothes.add(length);
+            cateClothes.add(cate);
+            if(cate.equals("상의")){
+                cateTop.add(bitmap);
+            }
+            else if (cate.equals("하의")){
+                cateBottom.add(bitmap);
+            }
+            else if(cate.equals("외투")){
+                cateOuter.add(bitmap);
+            }
+            else {
+                cateEct.add(bitmap);
+            }
+        }
+
+        cursor.close();
+    }
+
+    //현재 온도에 맞는 옷의 두께와 길이의 옷 리스트 반환
+    private void getClassiLength(String classi){
+        showImages.clear();
+        String getTemp = checkTemperature(currentTemp);
+        if(classi.equals("전체")) {
+            if (getTemp.equals("veryHot")) {
+                for (int i = 0; i < allClothe.size(); i++) {
+                    if ((thickClothes.get(i)).equals("얇음") && (lengthClothes.get(i).equals("짧다"))) {
+                        showImages.add(allClothe.get(i));
+                    }
+                }
+            } else if (getTemp.equals("hot")) {
+                for (int i = 0; i < allClothe.size(); i++) {
+                    if ((thickClothes.get(i)).equals("얇음") && ((lengthClothes.get(i).equals("짧다")) || (lengthClothes.get(i).equals("중간/7부~9부")))) {
+                        showImages.add(allClothe.get(i));
+                    }
+                }
+            } else if (getTemp.equals("littleHot")) {
+                for (int i = 0; i < allClothe.size(); i++) {
+                    if (((thickClothes.get(i)).equals("얇음") || (thickClothes.get(i)).equals("보통")) && ((lengthClothes.get(i).equals("짧다")) || (lengthClothes.get(i).equals("중간/7부~9부")))) {
+                        showImages.add(allClothe.get(i));
+                    }
+                }
+            } else if (getTemp.equals("mild")) {
+                for (int i = 0; i < allClothe.size(); i++) {
+                    if (((thickClothes.get(i)).equals("얇음") || (thickClothes.get(i)).equals("보통")) && ((lengthClothes.get(i).equals("길다")) || (lengthClothes.get(i).equals("중간/7부~9부")))) {
+                        showImages.add(allClothe.get(i));
+                    }
+                }
+            } else if (getTemp.equals("littleCold")) {
+                for (int i = 0; i < allClothe.size(); i++) {
+                    if (((thickClothes.get(i)).equals("두꺼움") || ((thickClothes.get(i)).equals("보통"))) && (lengthClothes.get(i).equals("길다"))) {
+                        showImages.add(allClothe.get(i));
+                    }
+                }
+            } else {
+                for (int i = 0; i < allClothe.size(); i++) {
+                    if ((thickClothes.get(i)).equals("두꺼움") && (lengthClothes.get(i).equals("길다"))) {
+                        showImages.add(allClothe.get(i));
+                    }
+                }
+            }
+        }else{
+            if(getTemp.equals("veryHot")){
+                for (int i = 0; i < allClothe.size(); i++){
+                    if((cateClothes.get(i)).equals(classi)){
+                        if((thickClothes.get(i)).equals("얇음") && (lengthClothes.get(i).equals("짧다"))){
+                            showImages.add(allClothe.get(i));
+                        }
+                    }
+                }
+            }else if(getTemp.equals("hot")){
+                for (int i = 0; i < allClothe.size(); i++){
+                    if((cateClothes.get(i)).equals(classi)){
+                        if((thickClothes.get(i)).equals("얇음") && ((lengthClothes.get(i).equals("짧다")) || (lengthClothes.get(i).equals("중간/7부~9부")))){
+                            showImages.add(allClothe.get(i));
+                        }
+                    }
+                }
+            }else if(getTemp.equals("littleHot")){
+                for (int i = 0; i < allClothe.size(); i++){
+                    if((cateClothes.get(i)).equals(classi)){
+                        if(((thickClothes.get(i)).equals("얇음") || (thickClothes.get(i)).equals("보통")) && ((lengthClothes.get(i).equals("짧다")) || (lengthClothes.get(i).equals("중간/7부~9부")))){
+                            showImages.add(allClothe.get(i));
+                        }
+                    }
+                }
+            }else if(getTemp.equals("mild")){
+                for (int i = 0; i < allClothe.size(); i++){
+                    if((cateClothes.get(i)).equals(classi)){
+                        if(((thickClothes.get(i)).equals("얇음") || (thickClothes.get(i)).equals("보통")) && ((lengthClothes.get(i).equals("길다")) || (lengthClothes.get(i).equals("중간/7부~9부")))){
+                            showImages.add(allClothe.get(i));
+                        }
+                    }
+                }
+            }else if(getTemp.equals("littleCold")){
+                for (int i = 0; i < allClothe.size(); i++){
+                    if((cateClothes.get(i)).equals(classi)){
+                        if(((thickClothes.get(i)).equals("두꺼움") || ((thickClothes.get(i)).equals("보통"))) && (lengthClothes.get(i).equals("길다"))){
+                            showImages.add(allClothe.get(i));
+                        }
+                    }
+                }
+            }else{
+                for (int i = 0; i < allClothe.size(); i++){
+                    if((cateClothes.get(i)).equals(classi)){
+                        if((thickClothes.get(i)).equals("두꺼움") && (lengthClothes.get(i).equals("길다"))){
+                            showImages.add(allClothe.get(i));
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
 }
