@@ -86,8 +86,10 @@ public class weather_Activity extends AppCompatActivity {
     private Animation showMenu;
     private Animation non_showMenu;
     private ImageView weather_icon;
+
     private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
     private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
+
     private boolean isAccessFineLocation = false;
     private boolean isAccessCoarseLocation = false;
     private boolean isPermission = false;

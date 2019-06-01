@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -40,7 +41,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class add_cloth_Activity extends AppCompatActivity {
     private boolean isSlideOpen = false;
@@ -53,7 +56,6 @@ public class add_cloth_Activity extends AppCompatActivity {
     private Animation non_showMenu;
 
     //이미지 선택 1)사진찍기 2)앨범에서 선택
-    private static final int MY_PERMISSION_CAMERA = 1111;
     private static final int REQUEST_TAKE_PHOTO = 2222;
     private static final int REQUEST_TAKE_ALBUM = 3333;
     private static final int REQUEST_IMAGE_CROP = 4444;
@@ -79,6 +81,13 @@ public class add_cloth_Activity extends AppCompatActivity {
     //SQLite
     private DBHelper dbHelper;
 
+    //Permission
+    private boolean isAccessCamera = false;
+    private boolean isAccessStorage = false;
+    private boolean isPermission = false;
+    private final int PERMISSIONS_CAMERA = 111;
+    private final int PERMISSIONS_EXTERNAL_STORAGE = 222;
+
     /**
      * @brief onCreate() method add_cloth_Activity.java
      * @detail Can add clothe image and select each category info to Database
@@ -87,6 +96,12 @@ public class add_cloth_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_cloth);
+
+        if(!isPermission){
+            callPermission();
+            return;
+        }
+
 
         img = findViewById(R.id.image_view);
         btn_add_image = findViewById(R.id.btn_add_image);
@@ -151,6 +166,8 @@ public class add_cloth_Activity extends AppCompatActivity {
         //최종 추가버튼
         btnAdd = findViewById(R.id.add_clothe);
         dbHelper = new DBHelper(add_cloth_Activity.this, "MyDB.db", null, 1);
+
+        callPermission();
     }
 
     //Slide menu animation
@@ -384,23 +401,6 @@ public class add_cloth_Activity extends AppCompatActivity {
         }
     }
 
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        switch (requestCode){
-            case MY_PERMISSION_CAMERA:
-                for(int i = 0; i< grantResults.length; i++){
-                    if(grantResults[i] < 0){
-                        Toast.makeText(add_cloth_Activity.this, "해당 권한을 활성화 하셔야 합니다.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-
-                break;
-        }
-    }
-
     //추가하기 버튼
 
     /**
@@ -460,5 +460,65 @@ public class add_cloth_Activity extends AppCompatActivity {
         return stream.toByteArray();
     }
 
+    private void requirePermission() {
+        String[] permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        List<String> listPermissionNeeded = new ArrayList<>();
+
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(add_cloth_Activity.this, permission) == PackageManager.PERMISSION_DENIED) {
+                listPermissionNeeded.add(permission);
+            }
+        }
+
+        if (!listPermissionNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(add_cloth_Activity.this, listPermissionNeeded.toArray(new String[listPermissionNeeded.size()]), 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_CAMERA
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            isAccessCamera= true;
+
+        } else if (requestCode == PERMISSIONS_EXTERNAL_STORAGE
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            isAccessStorage = true;
+        }
+
+        if (isAccessCamera && isAccessStorage) {
+            isPermission = true;
+        }
+    }
+
+    // GPS 권한 요청
+    private void callPermission() {
+        /**
+         *  @brief Check the SDK version and whether the permission is already granted or not.
+         */
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(
+                    new String[]{Manifest.permission.CAMERA},
+                    PERMISSIONS_CAMERA);
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSIONS_EXTERNAL_STORAGE);
+        } else {
+            isPermission = true;
+        }
+    }
 }
 
