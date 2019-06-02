@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     //카테고리 별 이미지 저장소
     private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
+    private  ArrayList<Integer> idxShowImages = new ArrayList<Integer>();
     private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
     private final ArrayList<String> thickClothes = new ArrayList<String>();
     private final ArrayList<String> lengthClothes = new ArrayList<String>();
