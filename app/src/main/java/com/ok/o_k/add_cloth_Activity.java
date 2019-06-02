@@ -168,9 +168,6 @@ public class add_cloth_Activity extends AppCompatActivity {
 
         //최종 추가버튼
         btnAdd = findViewById(R.id.add_clothe);
-
-
-        callPermission();
     }
 
     //Slide menu animation
@@ -283,13 +280,18 @@ public class add_cloth_Activity extends AppCompatActivity {
      * intent variance using camera app
      */
     private void captureCamera(){
+        Log.i("check1","check");
         String state = Environment.getExternalStorageState();
         if(Environment.MEDIA_MOUNTED.equals(state)){
+            Log.i("check1","check");
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if(takePictureIntent.resolveActivity(getPackageManager()) != null){
+                Log.i("check1","check");
                 File photoFile = null;
                 try{
+                    Log.i("check1","check");
                     photoFile = createImageFile();
+                    Log.i("check1","check");
                 }catch (IOException ex){
                     Log.e("capture Camera Error", ex.toString());
                 }
@@ -319,7 +321,12 @@ public class add_cloth_Activity extends AppCompatActivity {
     private File createImageFile() throws IOException{
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = timeStamp+".jpg";
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "gyeom");
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "ok");
+
+        if(!storageDir.exists()){
+            Log.i("mCurrentPhotoPath", storageDir.toString());
+            storageDir.mkdirs();
+        }
         File image = new File(storageDir, imageFileName);
         mCurrentPhotoPath = image.getAbsolutePath();
         Log.i("check", mCurrentPhotoPath);
