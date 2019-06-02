@@ -116,6 +116,10 @@ public class weather_Activity extends AppCompatActivity {
     //카테고리 별 이미지 저장소
     private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
     private final ArrayList<Bitmap> allClothe = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateTop = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateBottom = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateOuter = new ArrayList<Bitmap>();
+    private final ArrayList<Bitmap> cateEct = new ArrayList<Bitmap>();
     private final ArrayList<String> thickClothes = new ArrayList<String>();
     private final ArrayList<String> lengthClothes = new ArrayList<String>();
     private final ArrayList<String> cateClothes = new ArrayList<String>();
@@ -203,9 +207,9 @@ public class weather_Activity extends AppCompatActivity {
         weather_icon = findViewById(R.id.weather_icon);
 
         //Read Data
-       readData();
+        readData();
 
-       //Spinner
+        //Spinner
         spinner();
 
         // GPS 정보를 보여주기 위한 이벤트 클래스 등록
@@ -499,6 +503,7 @@ public class weather_Activity extends AppCompatActivity {
                         sb.append(line);
                     }
 
+
                     //JSONArray jsonArray = new JSONArray(jsonHtml.toString());
                     JSONObject obj = new JSONObject(sb.toString());//parser.parse(sb);
 
@@ -510,92 +515,173 @@ public class weather_Activity extends AppCompatActivity {
                     // items로 부터 itemlist 를 받아오기 itemlist : 뒤에 [ 로 시작하므로 jsonarray이다
                     JSONArray parse_item = (JSONArray) parse_items.get("item");
 
+
                     String category;
                     JSONObject weather;
                     JSONObject weather_2 = (JSONObject) parse_item.get(0);
-                    // parse_item은 배열형태이기 때문에 하나씩 데이터를 하나씩 가져올때 사용합니다.
-                    // 필요한 데이터만 가져오려고합니다.
-                    Log.i("Parse_item.length is ",Integer.toString(parse_item.length()));
 
 
+                    if (weather_2.get("fcstTime") instanceof String) {
 
-                    Log.i("weather1", "Check for error");
+                        // parse_item은 배열형태이기 때문에 하나씩 데이터를 하나씩 가져올때 사용합니다.
+                        // 필요한 데이터만 가져오려고합니다.
+                        Log.i("Parse_item.length is ", Integer.toString(parse_item.length()));
 
-                    String temp = (String) weather_2.get("fcstTime");
-                    //double temp = ((Number) weather_2.get("fcstTime")).doubleValue();
-                    Log.i("weather2", "Check for error"+temp);
+                        Log.i("weather", "" + weather_2);
 
-                    double fcst_Value;
-                    String fcst_time; //Time 자체를 "" 상태로 받아오기 때문에 String 선언이 필요함.
+                        Log.i("weather1", "Check for error");
 
-                    for (int i = 0; i < parse_item.length(); i++) {
+                        String temp = (String) weather_2.get("fcstTime");
+                        //double temp = ((Number) weather_2.get("fcstTime")).doubleValue();
+                        Log.i("weather2", "Check for error" + temp);
 
-                        weather = (JSONObject) parse_item.get(i);
-                        Log.i("weather", ""+weather);
+                        double fcst_Value;
+                        String fcst_time; //Time 자체를 "" 상태로 받아오기 때문에 String 선언이 필요함.
 
-                        fcst_time = (String) weather.get("fcstTime");
-                        //double fcst_time = ((Number) weather.get("fcstTime")).doubleValue();
-                        Log.i("weather 3", "Check for error");
+                        for (int i = 0; i < parse_item.length(); i++) {
 
+                            weather = (JSONObject) parse_item.get(i);
+                            Log.i("weather", "" + weather);
 
-                        fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
-                        //double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
-                        Log.i("weather 4", "Check for error");
-
-
-
-                        category = (String) weather.get("category");
-                        Log.i("fcst_time is ", "" + fcst_time);
-                        Log.i("first fcst_time is ", "" + temp);
-
-                        if(!fcst_time.equals(temp)){
-                            break;
-                        }
-
-                        // 출력합니다.
-                        Log.i("category : ", category);
-                        Log.i("fcst_Value : " , Double.toString(fcst_Value));
-
-                        bufferedReader.close();
-                        httpURLConnection.disconnect();
+                            fcst_time = (String) weather.get("fcstTime");
+                            //double fcst_time = ((Number) weather.get("fcstTime")).doubleValue();
+                            Log.i("weather 3", "Check for error");
 
 
-                        if (category.equals("SKY")){
-                            if (fcst_Value == 1) {
-                                result  += "맑음\n";
-                                sky = 1;
+                            fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                            //double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                            Log.i("weather 4", "Check for error");
+
+
+                            category = (String) weather.get("category");
+                            Log.i("fcst_time is ", "" + fcst_time);
+                            Log.i("first fcst_time is ", "" + temp);
+
+                            if (!fcst_time.equals(temp)) {
+                                break;
                             }
-                            else if (fcst_Value == 3 || fcst_Value == 2) {
-                                result  += "구름 많음\n";
-                                sky=3;
-                            }
-                            else if (fcst_Value == 4) {
-                                result += "흐림\n";
-                                sky=4;
-                            }
-                            else {
+
+                            // 출력합니다.
+                            Log.i("category : ", category);
+                            Log.i("fcst_Value : ", Double.toString(fcst_Value));
+
+                            bufferedReader.close();
+                            httpURLConnection.disconnect();
+
+
+                            if (category.equals("SKY")) {
+                                if (fcst_Value == 1) {
+                                    result += "맑음\n";
+                                    sky = 1;
+                                } else if (fcst_Value == 3 || fcst_Value == 2) {
+                                    result += "구름 많음\n";
+                                    sky = 3;
+                                } else if (fcst_Value == 4) {
+                                    result += "흐림\n";
+                                    sky = 4;
+                                } else {
+                                    result += "";
+                                }
+                            } else if (category.equals("T3H")) {
+                                currentTemp = fcst_Value;
+                                result += "기온: " + fcst_Value + "℃\n";
+                                Log.i("weather temperature", "Check for error\n" + result);
+                                break;
+                            } else if (category.equals("POP")) {
+                                result += ("강수확률 " + fcst_Value + "%\n");
+                                Log.i("weather rain", "Check for error\n" + result);
+                            } else {
                                 result += "";
                             }
+
+                        }
+
+                    }//if fcst_time 을 String으로 받아올 때 <- 확인해본 결과 시간마다 fsctTime 변수가 "1200" 일때도 있고 1200 일때도 있음.
+
+
+                    else if ((weather_2.get("fcstTime") instanceof Integer)) {
+
+                        // parse_item은 배열형태이기 때문에 하나씩 데이터를 하나씩 가져올때 사용합니다.
+                        // 필요한 데이터만 가져오려고합니다.
+                        Log.i("Parse_item.length is ", Integer.toString(parse_item.length()));
+
+                        Log.i("weather", "" + weather_2);
+
+                        Log.i("weather1", "Check for error");
+
+                        double temp = ((Number) weather_2.get("fcstTime")).doubleValue();
+                        //double temp = ((Number) weather_2.get("fcstTime")).doubleValue();
+                        Log.i("weather2", "Check for error" + temp);
+
+                        double fcst_Value;
+                        double fcst_time; //Time 자체를 double 상태로 받아오기 때문에 double 선언이 필요함.
+
+                        for (int i = 0; i < parse_item.length(); i++) {
+
+                            weather = (JSONObject) parse_item.get(i);
+                            Log.i("weather", "" + weather);
+
+                            fcst_time = ((Number) weather.get("fcstTime")).doubleValue();
+                            //double fcst_time = ((Number) weather.get("fcstTime")).doubleValue();
+                            Log.i("weather 3", "Check for error");
+
+
+                            fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                            //double fcst_Value = ((Number) weather.get("fcstValue")).doubleValue();
+                            Log.i("weather 4", "Check for error");
+
+
+                            category = (String) weather.get("category");
+                            Log.i("fcst_time is ", "" + fcst_time);
+                            Log.i("first fcst_time is ", "" + temp);
+
+                            if (fcst_time != temp) {
+                                break;
+                            }
+
+                            // 출력합니다.
+                            Log.i("category : ", category);
+                            Log.i("fcst_Value : ", Double.toString(fcst_Value));
+
+                            bufferedReader.close();
+                            httpURLConnection.disconnect();
+
+
+                            if (category.equals("SKY")) {
+                                if (fcst_Value == 1) {
+                                    result += "맑음\n";
+                                    sky = 1;
+                                } else if (fcst_Value == 3 || fcst_Value == 2) {
+                                    result += "구름 많음\n";
+                                    sky = 3;
+                                } else if (fcst_Value == 4) {
+                                    result += "흐림\n";
+                                    sky = 4;
+                                } else {
+                                    result += "";
+                                }
+                            } else if (category.equals("T3H")) {
+                                result += "기온: " + fcst_Value + "℃\n";
+                                Log.i("weather temperature", "Check for error\n" + result);
+                                break;
+                            } else if (category.equals("POP")) {
+                                result += ("강수확률 " + fcst_Value + "%\n");
+                                Log.i("weather rain", "Check for error\n" + result);
+                            } else {
+                                result += "";
+                            }
+
+
                         }
 
 
-                        else if (category.equals("T3H")){
-                            result += "기온: " + fcst_Value + "℃\n";
-                            Log.i("weather temperature", "Check for error\n"+result);
-                            break;
-                        }
-
-
-                        else if(category.equals("POP")){
-                            result += ("강수확률 " + fcst_Value + "%\n");
-                            Log.i("weather rain", "Check for error\n"+result);
-                        }
-
-                        else {
-                            result += "";
-                        }
 
                     }
+
+                    else{
+
+                    }
+
                 } catch (Exception e) {
                     result = e.toString();
                 }
@@ -725,6 +811,18 @@ public class weather_Activity extends AppCompatActivity {
             thickClothes.add(thick);
             lengthClothes.add(length);
             cateClothes.add(cate);
+            if(cate.equals("상의")){
+                cateTop.add(bitmap);
+            }
+            else if (cate.equals("하의")){
+                cateBottom.add(bitmap);
+            }
+            else if(cate.equals("외투")){
+                cateOuter.add(bitmap);
+            }
+            else {
+                cateEct.add(bitmap);
+            }
         }
 
         cursor.close();
