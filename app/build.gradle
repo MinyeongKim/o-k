@@ -6,8 +6,8 @@ android {
         applicationId "com.ok.o_k"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 3
-        versionName "3.0"
+        versionCode 5
+        versionName "3.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
