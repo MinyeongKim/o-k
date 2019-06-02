@@ -111,7 +111,7 @@ public class weather_Activity extends AppCompatActivity {
     private TextView textviewJSONText;
 
     private Spinner category;
-    private GridView grid;
+    private static GridView grid;
 
     //카테고리 별 이미지 저장소
     private ArrayList<Bitmap> showImages = new ArrayList<Bitmap>();
@@ -124,7 +124,7 @@ public class weather_Activity extends AppCompatActivity {
     private final ArrayList<String> lengthClothes = new ArrayList<String>();
     private final ArrayList<String> cateClothes = new ArrayList<String>();
 
-    private double currentTemp;
+    private double currentTemp = 9999;
 
     //SQLite
     private DBHelper dbHelper;
@@ -209,8 +209,6 @@ public class weather_Activity extends AppCompatActivity {
         //Read Data
         readData();
 
-        //Spinner
-        spinner();
 
         // GPS 정보를 보여주기 위한 이벤트 클래스 등록
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
@@ -305,14 +303,16 @@ public class weather_Activity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
 
 
-
-
                 } else {
                     // GPS 를 사용할수 없으므로
                     gps.showSettingsAlert();
                 }
             }
         });
+
+        //Spinner
+        spinner();
+
 
         callPermission();  // 권한 요청을 해야 함
 
@@ -444,6 +444,7 @@ public class weather_Activity extends AppCompatActivity {
                 }
 
             }
+
         }
     }
 
@@ -739,6 +740,7 @@ public class weather_Activity extends AppCompatActivity {
 
 
     private void spinner(){
+        Log.i("Spinner start", "ready");
         category = (Spinner)findViewById(R.id.category_cloth);
         category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -760,6 +762,7 @@ public class weather_Activity extends AppCompatActivity {
                 }
 
                 //Create GridView
+                Log.i("Create grid", "check");
                 grid = findViewById(R.id.gridView);
                 weather_Activity.MyGridAdapter adapter = new weather_Activity.MyGridAdapter(weather_Activity.this);
                 grid.setAdapter(adapter);
@@ -774,7 +777,9 @@ public class weather_Activity extends AppCompatActivity {
 
     private String checkTemperature(Double temp){
         String checkTemp = "";
-        if(temp >= 27){
+        if(temp == 9999){
+            checkTemp = "noneData";
+        }else if(temp >= 27){
             checkTemp = "veryHot";
         }else if(temp<27 && temp >=22){
             checkTemp = "hot";
@@ -833,7 +838,8 @@ public class weather_Activity extends AppCompatActivity {
         showImages.clear();
         String getTemp = checkTemperature(currentTemp);
         if(classi.equals("전체")) {
-            if (getTemp.equals("veryHot")) {
+            if (getTemp.equals("noneData")){
+            } else if(getTemp.equals("veryHot")) {
                 for (int i = 0; i < allClothe.size(); i++) {
                     if ((thickClothes.get(i)).equals("얇음") && (lengthClothes.get(i).equals("짧다"))) {
                         showImages.add(allClothe.get(i));
@@ -871,7 +877,8 @@ public class weather_Activity extends AppCompatActivity {
                 }
             }
         }else{
-            if(getTemp.equals("veryHot")){
+            if(getTemp.equals("noneData")){
+            } else if(getTemp.equals("veryHot")){
                 for (int i = 0; i < allClothe.size(); i++){
                     if((cateClothes.get(i)).equals(classi)){
                         if((thickClothes.get(i)).equals("얇음") && (lengthClothes.get(i).equals("짧다"))){
