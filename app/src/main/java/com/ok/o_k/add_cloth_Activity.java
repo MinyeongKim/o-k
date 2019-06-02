@@ -485,7 +485,9 @@ public class add_cloth_Activity extends AppCompatActivity {
 
             isAccessCamera= true;
 
-        } else if (requestCode == PERMISSIONS_EXTERNAL_STORAGE
+        }
+
+        if (requestCode == PERMISSIONS_EXTERNAL_STORAGE
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
             isAccessStorage = true;
