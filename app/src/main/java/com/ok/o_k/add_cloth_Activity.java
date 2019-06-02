@@ -393,6 +393,8 @@ public class add_cloth_Activity extends AppCompatActivity {
         cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         cropIntent.setDataAndType(photoURI, "image/*");
 
+        cropIntent.putExtra("outputX", 350);
+        cropIntent.putExtra("outputY", 350);
         cropIntent.putExtra("aspectX", 1);
         cropIntent.putExtra("aspectY", 1);
         cropIntent.putExtra("scale", true);
