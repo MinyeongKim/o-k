@@ -510,15 +510,17 @@ public class add_cloth_Activity extends AppCompatActivity {
                     new String[]{Manifest.permission.CAMERA},
                     PERMISSIONS_CAMERA);
 
-        } if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             requestPermissions(
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PERMISSIONS_EXTERNAL_STORAGE);
-        } else {
-            isPermission = true;
         }
+
+        isPermission = true;
     }
 }
